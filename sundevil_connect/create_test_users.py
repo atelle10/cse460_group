@@ -27,11 +27,11 @@ student1 = Student.objects.create(
 )
 
 student2 = Student.objects.create(
-    username='student1',
+    username='atelle10',
     password='pass123',
-    email='student2@asu.edu',
-    first_name='Bob',
-    last_name='Smith',
+    email='atelle10@asu.edu',
+    first_name='Andrew',
+    last_name='Tellez',
     major='Engineering',
     college_year=2,
     topics_of_interest=['sports', 'music']

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Flagged Content - SunDevil Connect{% endblock %}
+
+{% block content %}
+<h2 style="color: #8C1D40; margin-bottom: 20px;">Flagged Content</h2>
+
+{% if flagged_items %}
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background: #8C1D40; color: white;">
+            <th style="padding: 12px; text-align: left;">Type</th>
+            <th style="padding: 12px; text-align: left;">Content</th>
+            <th style="padding: 12px; text-align: left;">Reporter</th>
+            <th style="padding: 12px; text-align: left;">Date</th>
+            <th style="padding: 12px; text-align: center;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in flagged_items %}
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px;">{{ item.type }}</td>
+            <td style="padding: 12px;">{{ item.content|truncatewords:15 }}</td>
+            <td style="padding: 12px;">{{ item.reporter }}</td>
+            <td style="padding: 12px;">{{ item.date }}</td>
+            <td style="padding: 12px; text-align: center;">
+                <button class="btn" style="padding: 5px 12px; margin-right: 5px;">Review</button>
+                <button class="btn btn-secondary" style="padding: 5px 12px;">Dismiss</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666; margin-top: 30px;">No flagged content at the moment.</p>
+{% endif %}
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

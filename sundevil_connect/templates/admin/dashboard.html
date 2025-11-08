@@ -5,6 +5,10 @@
 {% block content %}
 <h2 style="color: #8C1D40; margin-bottom: 20px;">Admin Dashboard</h2>
 
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'admin_dashboard' %}?view=flagged" class="button">View Flagged Content</a>
+</div>
+
 {% if success %}
 <div class="message success">{{ success }}</div>
 {% endif %}
@@ -54,7 +58,7 @@
         <h4 style="color: #8C1D40; margin-bottom: 10px;">{{ club.name }}</h4>
         <p style="margin-bottom: 10px;">{{ club.description }}</p>
         <p style="color: #666; font-size: 14px;">
-            <strong>Leader:</strong> {{ club.club_leader.username }}<br>
+            <strong>Leader:</strong> {{ club.club_leader.first_name }} {{ club.club_leader.last_name }}<br>
             <strong>Location:</strong> {{ club.location }}<br>
             <strong>Members:</strong> {{ club.members_count }}
         </p>

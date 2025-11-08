@@ -9,19 +9,25 @@ class AdminController:
         application = ClubApplication.objects.get(application_id=application_id)
         student = application.student
 
-        club_leader = ClubLeader.objects.create(
-            username=student.username,
-            password=student.password,
-            email=student.email,
-            first_name=student.first_name,
-            last_name=student.last_name,
-            privacy_level=student.privacy_level,
-            topics_of_interest=student.topics_of_interest,
-            major=student.major,
-            college_year=student.college_year,
-            title="Founder",
-            leader_start_date=timezone.now().date()
-        )
+        
+        # If the student already exists as a club leader, use that account
+        try:
+            club_leader = ClubLeader.objects.get(username=student.username)
+        except ClubLeader.DoesNotExist:
+            club_leader = ClubLeader.objects.create(
+                #temp fix for username conflict
+                username=student.username + "_leader",
+                password=student.password,
+                email=student.email,
+                first_name=student.first_name,
+                last_name=student.last_name,
+                privacy_level=student.privacy_level,
+                topics_of_interest=student.topics_of_interest,
+                major=student.major,
+                college_year=student.college_year,
+                title="Founder",
+                leader_start_date=timezone.now().date()
+            )
 
         club = Club.objects.create(
             name=application.metadata['name'],

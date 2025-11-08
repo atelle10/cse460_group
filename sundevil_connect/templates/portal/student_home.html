@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Portal{% endblock %}
+
+{% block content %}
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+<h2 style="color: #8C1D40; margin-bottom: 25px;">Student Portal</h2>
+
+<div style="margin-bottom: 35px; display: flex; gap: 10px;">
+    <a href="{% url 'student_home' %}?action=apply" class="button">Create New Club</a>
+    {% if is_club_leader %}
+    <a href="{% url 'club_leader_dashboard' %}" class="button">My Club</a>
+    {% endif %}
+</div>
+
+<div style="display: flex; gap: 15px; border-bottom: 2px solid #8C1D40; margin-bottom: 20px;">
+    <button onclick="showTab('clubs')" id="clubs-tab"
+            style="padding: 10px 20px; border: none; background: none; color: #8C1D40; cursor: pointer; border-bottom: 3px solid #8C1D40; font-weight: bold;">
+        Clubs
+    </button>
+    <button onclick="showTab('events')" id="events-tab"
+            style="padding: 10px 20px; border: none; background: none; color: #666; cursor: pointer; border-bottom: 3px solid transparent;">
+        Events
+    </button>
+</div>
+
+<div id="clubs-content">
+<h3 style="color: #333; margin-bottom: 18px; padding-bottom: 8px;">
+    Available Clubs
+</h3>
+
+{% if clubs %}
+    {% for club in clubs %}
+    <div style="border: 1px solid #ddd; padding: 18px; margin-bottom: 16px; background-color: #fafafa;">
+        <h4 style="color: #8C1D40; margin-bottom: 8px;">
+            <a href="{% url 'club_detail' club.club_id %}" style="color: #8C1D40; text-decoration: none;">
+                {{ club.name }}
+            </a>
+        </h4>
+        <p style="margin-bottom: 12px; color: #555;">{{ club.description }}</p>
+        <div style="font-size: 14px; color: #666;">
+            <p style="margin: 4px 0;"><strong>Location:</strong> {{ club.location }}</p>
+            <p style="margin: 4px 0;"><strong>Categories:</strong> {{ club.categories|join:", " }}</p>
+            <p style="margin: 4px 0;"><strong>Members:</strong> {{ club.members_count }}</p>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<p style="color: #777; font-style: italic;">No clubs yet. Be the first to start one!</p>
+{% endif %}
+</div>
+
+<div id="events-content" style="display: none;">
+<h3 style="color: #333; margin-bottom: 18px; padding-bottom: 8px;">
+    Upcoming Events
+</h3>
+<p style="color: #777; font-style: italic;">No events scheduled at this time.</p>
+</div>
+
+<script>
+function showTab(tab) {
+    const clubsContent = document.getElementById('clubs-content');
+    const eventsContent = document.getElementById('events-content');
+    const clubsTab = document.getElementById('clubs-tab');
+    const eventsTab = document.getElementById('events-tab');
+
+    if (tab === 'clubs') {
+        clubsContent.style.display = 'block';
+        eventsContent.style.display = 'none';
+        clubsTab.style.color = '#8C1D40';
+        clubsTab.style.borderBottom = '3px solid #8C1D40';
+        clubsTab.style.fontWeight = 'bold';
+        eventsTab.style.color = '#666';
+        eventsTab.style.borderBottom = '3px solid transparent';
+        eventsTab.style.fontWeight = 'normal';
+    } else if (tab === 'events') {
+        clubsContent.style.display = 'none';
+        eventsContent.style.display = 'block';
+        clubsTab.style.color = '#666';
+        clubsTab.style.borderBottom = '3px solid transparent';
+        clubsTab.style.fontWeight = 'normal';
+        eventsTab.style.color = '#8C1D40';
+        eventsTab.style.borderBottom = '3px solid #8C1D40';
+        eventsTab.style.fontWeight = 'bold';
+    }
+}
+</script>
+{% endblock %}

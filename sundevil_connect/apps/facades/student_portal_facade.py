@@ -10,3 +10,6 @@ class StudentPortalFacade:
 
     def view_clubs(self) -> list[Club]:
         return list(self.ctrl.view_clubs())
+
+    def view_club_details(self, club_id: int) -> Club:
+        return self.ctrl.view_club_page(club_id)
