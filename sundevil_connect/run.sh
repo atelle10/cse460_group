@@ -20,9 +20,9 @@ echo ""
 echo "Setup done. Starting server..."
 echo ""
 echo "Test Accounts created for grading:"
-echo "  Admin:    username: admin, password: admin123"
-echo "  Student: username: mkrasnik , password: pass123"
-echo "  Student: username: atelle10, password: pass123"
+echo "Admin: username: admin, password: admin123"
+echo "Student: username: mkrasnik , password: pass123"
+echo "Student: username: atelle10, password: pass123"
 echo ""
 
 python3 manage.py runserver
