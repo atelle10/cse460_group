@@ -73,7 +73,7 @@
             <h1>SunDevil Connect</h1>
             {% if username %}
             <div class="user-section">
-                <span>Hey, {{ username }}!</span>
+                <span>Hey, {{ request.session.first_name }} {{ request.session.last_name }}!</span>
                 <form method="post" action="{% url 'logout' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="button button-secondary">Logout</button>

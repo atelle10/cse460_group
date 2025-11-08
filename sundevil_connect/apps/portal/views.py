@@ -26,6 +26,8 @@ class AuthView(View):
             request.session['user_id'] = admin.user_id
             request.session['user_type'] = 'admin'
             request.session['username'] = admin.username
+            request.session['first_name'] = admin.first_name
+            request.session['last_name'] = admin.last_name
             return redirect('admin_dashboard')
         except Admin.DoesNotExist:
             pass
@@ -35,6 +37,8 @@ class AuthView(View):
             request.session['user_id'] = student.user_id
             request.session['user_type'] = 'student'
             request.session['username'] = student.username
+            request.session['first_name'] = student.first_name
+            request.session['last_name'] = student.last_name
             return redirect('student_home')
         except Student.DoesNotExist:
             pass
