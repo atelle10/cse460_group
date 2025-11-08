@@ -10,8 +10,9 @@
 <h2 style="color: #8C1D40; margin-bottom: 25px;">Student Portal</h2>
 
 <div style="margin-bottom: 35px; display: flex; gap: 10px;">
+    {% if not is_club_leader %}
     <a href="{% url 'student_home' %}?action=apply" class="button">Create New Club</a>
-    {% if is_club_leader %}
+    {% else %}
     <a href="{% url 'club_leader_dashboard' %}" class="button">My Club</a>
     {% endif %}
 </div>
