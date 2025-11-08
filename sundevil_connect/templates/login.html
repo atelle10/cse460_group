@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - SunDevil Connect{% endblock %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 50px auto;">
+    <h2 style="text-align: center; color: #8C1D40; margin-bottom: 30px;">Login to SunDevil Connect</h2>
+    
+    {% if error %}
+    <div class="message error">{{ error }}</div>
+    {% endif %}
+    
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        
+        <div>
+            <label for="username" style="display: block; margin-bottom: 5px; font-weight: bold;">Username:</label>
+            <input type="text" id="username" name="username" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        
+        <div>
+            <label for="password" style="display: block; margin-bottom: 5px; font-weight: bold;">Password:</label>
+            <input type="password" id="password" name="password" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Login</button>
+    </form>
+</div>
+{% endblock %}

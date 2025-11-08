@@ -8,7 +8,7 @@ class AdminController:
     def approve_club(self, application_id: int) -> bool:
         application = ClubApplication.objects.get(application_id=application_id)
         student = application.student
-        
+
         club_leader = ClubLeader.objects.create(
             username=student.username,
             password=student.password,
@@ -22,7 +22,7 @@ class AdminController:
             title="Founder",
             leader_start_date=timezone.now().date()
         )
-        
+
         club = Club.objects.create(
             name=application.metadata['name'],
             description=application.metadata['description'],
@@ -33,18 +33,24 @@ class AdminController:
             leaders_count=1,
             club_leader=club_leader
         )
-        
+
         application.status = 'APPROVED'
         application.is_approved = True
         application.save()
-        
+
         return True
 
     def reject_club(self, application_id: int, reason: str) -> bool:
         application = ClubApplication.objects.get(application_id=application_id)
-        
+
         application.status = 'REJECTED'
         application.is_approved = False
         application.save()
-        
+
         return True
+
+    def review_flag(self, flag_id: int):
+        pass
+
+    def resolve_flag(self, flag_id: int, decision: int) -> bool:
+        pass

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Club - SunDevil Connect{% endblock %}
+
+{% block content %}
+<h2 style="color: #8C1D40; margin-bottom: 20px;">Create New Club Application</h2>
+
+{% if error %}
+<div class="message error">{{ error }}</div>
+{% endif %}
+
+<form method="post" style="display: flex; flex-direction: column; gap: 20px;">
+    {% csrf_token %}
+    
+    <div>
+        <label for="club_name" style="display: block; margin-bottom: 5px; font-weight: bold;">Club Name:</label>
+        <input type="text" id="club_name" name="club_name" required 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    
+    <div>
+        <label for="description" style="display: block; margin-bottom: 5px; font-weight: bold;">Description:</label>
+        <textarea id="description" name="description" required rows="4"
+                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+    </div>
+    
+    <div>
+        <label for="location" style="display: block; margin-bottom: 5px; font-weight: bold;">Location:</label>
+        <input type="text" id="location" name="location" required 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    
+    <div>
+        <label for="categories" style="display: block; margin-bottom: 5px; font-weight: bold;">Categories (comma-separated):</label>
+        <input type="text" id="categories" name="categories" placeholder="e.g., tech, sports, music" required 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    
+    <div style="display: flex; gap: 10px;">
+        <button type="submit" class="btn">Submit Application</button>
+        <a href="{% url 'student_home' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}

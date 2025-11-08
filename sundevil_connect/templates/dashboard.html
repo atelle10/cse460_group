@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - SunDevil Connect{% endblock %}
+
+{% block content %}
+<h2 style="color: #8C1D40; margin-bottom: 20px;">Admin Dashboard</h2>
+
+{% if success %}
+<div class="message success">{{ success }}</div>
+{% endif %}
+
+<h3 style="color: #8C1D40; margin-bottom: 15px;">Pending Club Applications</h3>
+
+{% if pending_applications %}
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+    <thead>
+        <tr style="background: #8C1D40; color: white;">
+            <th style="padding: 12px; text-align: left;">Student</th>
+            <th style="padding: 12px; text-align: left;">Club Name</th>
+            <th style="padding: 12px; text-align: left;">Description</th>
+            <th style="padding: 12px; text-align: left;">Status</th>
+            <th style="padding: 12px; text-align: center;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for app in pending_applications %}
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px;">{{ app.student.username }}</td>
+            <td style="padding: 12px;">{{ app.metadata.name }}</td>
+            <td style="padding: 12px;">{{ app.metadata.description|truncatewords:10 }}</td>
+            <td style="padding: 12px;">{{ app.status }}</td>
+            <td style="padding: 12px; text-align: center;">
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="application_id" value="{{ app.application_id }}">
+                    <button type="submit" name="action" value="approve" class="btn" style="padding: 5px 15px; margin-right: 5px;">Approve</button>
+                    <button type="submit" name="action" value="reject" class="btn btn-secondary" style="padding: 5px 15px;">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p style="color: #666; margin-bottom: 40px;">No pending applications.</p>
+{% endif %}
+
+<h3 style="color: #8C1D40; margin-bottom: 15px;">Approved Clubs</h3>
+
+{% if clubs %}
+<div style="display: grid; gap: 15px;">
+    {% for club in clubs %}
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 4px;">
+        <h4 style="color: #8C1D40; margin-bottom: 10px;">{{ club.name }}</h4>
+        <p style="margin-bottom: 10px;">{{ club.description }}</p>
+        <p style="color: #666; font-size: 14px;">
+            <strong>Leader:</strong> {{ club.club_leader.username }}<br>
+            <strong>Location:</strong> {{ club.location }}<br>
+            <strong>Members:</strong> {{ club.members_count }}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p style="color: #666;">No approved clubs yet.</p>
+{% endif %}
+{% endblock %}
