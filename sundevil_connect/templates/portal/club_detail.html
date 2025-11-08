@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ club.name }} - SunDevil Connect{% endblock %}
+
+{% block content %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'student_home' %}" class="btn btn-secondary">Back to Clubs</a>
+</div>
+
+
+<div class="club-detail-box">
+    <div class="club-header">
+        <h2>{{ club.name }}</h2>
+    </div>
+
+    <div class="club-description">
+        <h3>About</h3>
+        <p>{{ club.description }}</p>
+    </div>
+
+
+    <div class="club-details-grid">
+        <div class="detail-item">
+            <h3>Club Information</h3>
+            <p><strong>Location:</strong> {{club.location}}</p>
+
+            <p><strong>Members:</strong> {{club.members_count}}</p>
+
+            <p><strong>Leaders:</strong> {{club.leaders_count}}</p>
+        </div>
+
+        <div class="detail-item">
+            <h3>Leadership</h3>
+            <p>
+                <strong>Club Leader:</strong> {{club.club_leader.first_name}} {{club.club_leader.last_name}}
+            </p>
+            <p>
+                <strong>Title:</strong> {{club.club_leader.title}}
+            </p>
+        </div>
+    </div>
+
+
+
+    {% if club.categories %}
+    <div class="categories-section">
+        <h3>Categories</h3>
+        <div class="categories-wrapper">
+            {% for category in club.categories %}
+            <span class="category-tag">
+                {{category}}
+            </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="join-section">
+        <button class="btn">Join Club</button>
+    </div>
+</div>
+
+
+<div class="announcements-box">
+    <h3>Recent Announcements</h3>
+    <p>No announcements yet.</p>
+</div>
+
+{% endblock %}

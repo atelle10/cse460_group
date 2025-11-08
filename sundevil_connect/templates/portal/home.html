@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Portal - SunDevil Connect{% endblock %}
+
+{% block content %}
+<h2 style="color: #8C1D40; margin-bottom: 20px;">Student Portal</h2>
+
+{% if success %}
+<div class="message success">{{ success }}</div>
+{% endif %}
+
+<div style="margin-bottom: 30px;">
+    <a href="{% url 'club_application' %}" class="btn">Create New Club</a>
+</div>
+
+<h3 style="color: #8C1D40; margin-bottom: 15px;">Existing Clubs</h3>
+
+{% if clubs %}
+<div style="display: grid; gap: 15px;">
+    {% for club in clubs %}
+    <div style="border: 1px solid #ddd; padding: 20px; border-radius: 4px;">
+        <h4 style="color: #8C1D40; margin-bottom: 10px;">{{ club.name }}</h4>
+        <p style="margin-bottom: 10px;">{{ club.description }}</p>
+        <p style="color: #666; font-size: 14px;">
+            <strong>Location:</strong> {{club.location}}<br>
+            
+            <strong>Categories:</strong> {{club.categories|join:", "}}<br>
+
+            <strong>Members:</strong> {{club.members_count}}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p style="color: #666;">No clubs available yet. Be the first to create one!</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,535 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 17px;
+}
+
+.main-container {
+    max-width: 1100px;
+    margin: 23px auto;
+    background: #fff;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+.header {
+    background-color: #8C1D40;
+    color: #fff;
+    padding: 19px 28px;
+    margin: -28px -28px 27px -28px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 26px;
+    display: inline-block;
+}
+
+.user-section {
+    float: right;
+    margin-top: 4px;
+}
+
+.user-section span {
+    margin-right: 13px;
+}
+
+.button {
+    padding: 9px 19px;
+    background-color: #FFC627;
+    color: #8C1D40;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.button:hover {
+    background-color: #e6b023;
+}
+
+.button-secondary {
+    background-color: #fff;
+    color: #8C1D40;
+    border: 1px solid #8C1D40;
+}
+
+.btn {
+    padding: 11px 22px;
+    background-color: #8C1D40;
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background-color: #6d1532;
+}
+
+.btn-secondary {
+    background-color: #666;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #555;
+}
+
+.alert {
+    padding: 13px;
+    margin-bottom: 19px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+h2 {
+    color: #8C1D40;
+    margin-bottom: 27px;
+}
+
+h3 {
+    color: #333;
+    margin-bottom: 19px;
+    padding-bottom: 9px;
+}
+
+h4 {
+    color: #8C1D40;
+    margin-bottom: 9px;
+}
+
+.action-buttons {
+    margin-bottom: 37px;
+    display: flex;
+    gap: 11px;
+}
+
+.tabs {
+    display: flex;
+    gap: 17px;
+    border-bottom: 2px solid #8C1D40;
+    margin-bottom: 21px;
+}
+
+.tab-button {
+    padding: 11px 21px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-button.active {
+    color: #8C1D40;
+    border-bottom: 3px solid #8C1D40;
+    font-weight: bold;
+}
+
+.tab-button.inactive {
+    color: #666;
+}
+
+.club-card {
+    border: 1px solid #ddd;
+    padding: 19px;
+    margin-bottom: 17px;
+    background-color: #fafafa;
+}
+
+.club-card h4 a {
+    color: #8C1D40;
+    text-decoration: none;
+}
+
+.club-card p {
+    margin-bottom: 13px;
+    color: #555;
+}
+
+.club-info {
+    font-size: 14px;
+    color: #666;
+}
+
+.club-info p {
+    margin: 5px 0;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.form-group {
+    margin-bottom: 3px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 11px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table thead tr {
+    background: #8C1D40;
+    color: white;
+}
+
+table th {
+    padding: 13px;
+    text-align: left;
+}
+
+table td {
+    padding: 13px;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.login-container {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.login-box {
+    background: white;
+    padding: 33px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.login-title {
+    color: #8C1D40;
+    margin-bottom: 27px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 11px;
+    margin-bottom: 17px;
+    border-radius: 4px;
+}
+
+.club-header {
+    margin-bottom: 23px;
+}
+
+.club-description {
+    margin-bottom: 27px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.club-details-grid {
+    display: grid;
+    gap: 19px;
+    margin-bottom: 31px;
+}
+
+.detail-item {
+    padding: 17px;
+    background: #f9f9f9;
+    border-left: 3px solid #8C1D40;
+}
+
+.detail-item strong {
+    color: #8C1D40;
+    display: block;
+    margin-bottom: 7px;
+}
+
+.dashboard-section {
+    margin-bottom: 33px;
+}
+
+.admin-actions {
+    margin-bottom: 29px;
+    display: flex;
+    gap: 13px;
+}
+
+.application-card {
+    border: 1px solid #ddd;
+    padding: 21px;
+    margin-bottom: 19px;
+    background: #fafafa;
+}
+
+.application-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+}
+
+.application-actions {
+    display: flex;
+    gap: 9px;
+}
+
+.club-stats {
+    display: flex;
+    gap: 23px;
+    margin-bottom: 29px;
+}
+
+.stat-card {
+    flex: 1;
+    background: #f9f9f9;
+    padding: 19px;
+    border-left: 4px solid #8C1D40;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #8C1D40;
+    margin-bottom: 7px;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #777;
+    font-style: italic;
+}
+
+.user-section form {
+    display: inline;
+}
+
+.login-page-wrapper {
+    margin-top: 63px;
+    margin-bottom: 42px;
+}
+
+.login-container input {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.login-container .button {
+    width: 100%;
+    padding: 12px;
+}
+
+.club-detail-wrapper {
+    margin-bottom: 21px;
+}
+
+.club-detail-box {
+    border: 1px solid #ddd;
+    padding: 27px;
+    border-radius: 4px;
+    margin-bottom: 31px;
+}
+
+.club-detail-box h3 {
+    font-size: 18px;
+}
+
+.club-detail-box .club-details-grid {
+    grid-template-columns: 1fr 1fr;
+}
+
+.club-detail-box .detail-item p {
+    margin-bottom: 9px;
+}
+
+.club-detail-box .categories-section {
+    margin-bottom: 21px;
+}
+
+.club-detail-box .categories-wrapper {
+    display: flex;
+    gap: 11px;
+    flex-wrap: wrap;
+}
+
+.category-tag {
+    background: #FFC627;
+    color: #000;
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.club-detail-box .join-section {
+    margin-top: 27px;
+}
+
+.announcements-box {
+    border: 1px solid #ddd;
+    padding: 27px;
+    border-radius: 4px;
+}
+
+.announcements-box h3 {
+    margin-bottom: 17px;
+}
+
+.announcements-box p {
+    color: #666;
+}
+
+.admin-table-wrapper {
+    margin-bottom: 41px;
+}
+
+.admin-table-actions {
+    text-align: center;
+}
+
+.admin-table-actions form {
+    display: inline;
+}
+
+.admin-table-actions .btn {
+    padding: 6px 17px;
+    margin-right: 7px;
+}
+
+.admin-table-actions .btn-secondary {
+    padding: 6px 17px;
+}
+
+.clubs-grid {
+    display: grid;
+    gap: 17px;
+}
+
+.clubs-grid .application-card p {
+    margin-bottom: 11px;
+}
+
+.clubs-grid .application-card .club-meta {
+    color: #666;
+    font-size: 14px;
+}
+
+.flagged-table-actions {
+    text-align: center;
+}
+
+.flagged-table-actions .btn {
+    padding: 6px 14px;
+    margin-right: 7px;
+}
+
+.flagged-table-actions .btn-secondary {
+    padding: 6px 14px;
+}
+
+.flagged-message {
+    margin-top: 31px;
+}
+
+.back-button-section {
+    margin-top: 31px;
+}
+
+.leader-dashboard-box {
+    border: 1px solid #ddd;
+    padding: 27px;
+    border-radius: 4px;
+    margin-bottom: 31px;
+}
+
+.leader-dashboard-box h3 {
+    margin-bottom: 17px;
+}
+
+.leader-dashboard-box .club-description-text {
+    line-height: 1.6;
+    margin-bottom: 17px;
+}
+
+.leader-dashboard-box .info-section {
+    margin-bottom: 21px;
+}
+
+.leader-dashboard-box .stat-card p {
+    margin-bottom: 9px;
+}
+
+.leader-dashboard-box .categories-section {
+    margin-bottom: 21px;
+}
+
+.leader-dashboard-box .categories-wrapper {
+    display: flex;
+    gap: 11px;
+    flex-wrap: wrap;
+    margin-top: 9px;
+}
+
+.leader-dashboard-box .actions-section {
+    margin-top: 27px;
+    display: flex;
+    gap: 11px;
+}
+
+.leader-dashboard-box textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.no-club-warning {
+    border: 1px solid #FFC627;
+    background: #FFF9E6;
+    padding: 21px;
+    border-radius: 4px;
+}
+
+.no-club-warning p {
+    margin: 0;
+}
+
+.events-hidden {
+    display: none;
+}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - SunDevil Connect{% endblock %}
+
+{% block content %}
+
+<h2>Admin Dashboard</h2>
+
+<div class="admin-actions">
+    <a href="{% url 'admin_dashboard' %}?view=flagged" class="button">View Flagged Content</a>
+</div>
+
+{% if success %}
+<div class="alert alert-success">
+    {{ success }}
+</div>
+{% endif %}
+
+
+<div class="dashboard-section">
+    <h3>Pending Club Applications</h3>
+
+    {% if pending_applications %}
+    <table class="admin-table-wrapper">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Club Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th class="admin-table-actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in pending_applications %}
+            <tr>
+                <td>{{app.student.username}}</td>
+                
+                <td>{{app.metadata.name}}</td>
+
+                <td>{{app.metadata.description|truncatewords:10 }}</td>
+
+                <td>{{app.status}}</td>
+
+                <td class="admin-table-actions">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="application_id" value="{{ app.application_id }}">
+                        <button type="submit" name="action" value="approve" class="btn">
+                            Approve
+                        </button>
+                        <button type="submit" name="action" value="reject" class="btn btn-secondary">
+                            Reject
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted admin-table-wrapper">No pending applications.</p>
+    {% endif %}
+</div>
+
+
+<div class="dashboard-section">
+    <h3>Approved Clubs</h3>
+
+    {% if clubs %}
+    <div class="clubs-grid">
+        {% for club in clubs %}
+        <div class="application-card">
+            <h4>{{ club.name }}</h4>
+            <p>{{ club.description }}</p>
+            <p class="club-meta">
+                <strong>Leader:</strong> {{club.club_leader.first_name}} {{club.club_leader.last_name}}<br>
+
+                <strong>Location:</strong> {{club.location}}<br>
+
+                <strong>Members:</strong> {{club.members_count}}
+
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">No approved clubs yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

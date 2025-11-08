@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Portal{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">
+    {{ success }}
+</div>
+{% endif %}
+
+<h2>Student Portal</h2>
+
+<div class="action-buttons">
+    {% if not is_club_leader %}
+        <a href="{% url 'student_home' %}?action=apply" class="button">Create New Club</a>
+    {% else %}
+        <a href="{% url 'club_leader_dashboard' %}" class="button">My Club</a>
+    {% endif %}
+</div>
+
+<div class="tabs">
+    <button onclick="showTab('clubs')" id="clubs-tab" class="tab-button active">
+        Clubs
+    </button>
+    <button onclick="showTab('events')" id="events-tab" class="tab-button inactive">
+        Events
+    </button>
+</div>
+
+
+<div id="clubs-content">
+    <h3>Available Clubs</h3>
+
+    {% if clubs %}
+        {% for club in clubs %}
+        <div class="club-card">
+            <h4>
+                <a href="{% url 'club_detail' club.club_id %}">{{club.name}}</a>
+            </h4>
+            <p>{{club.description}}</p>
+
+            <div class="club-info">
+                <p><strong>Location:</strong> {{club.location}}</p>
+
+                <p><strong>Categories:</strong> {{club.categories|join:", "}}</p>
+
+
+                <p><strong>Members:</strong> {{club.members_count}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No clubs yet. Be the first to start one!</p>
+    {% endif %}
+</div>
+
+<div id="events-content" class="events-hidden">
+    <h3>Upcoming Events</h3>
+    <p class="text-muted">No events scheduled at this time.</p>
+</div>
+
+
+<script>
+function showTab(tab) {
+    const clubsContent = document.getElementById('clubs-content');
+    const eventsContent = document.getElementById('events-content');
+    const clubsTab = document.getElementById('clubs-tab');
+    const eventsTab = document.getElementById('events-tab');
+
+    if (tab === 'clubs') {
+        clubsContent.style.display = 'block';
+        eventsContent.style.display = 'none';
+
+        clubsTab.classList.add('active');
+        clubsTab.classList.remove('inactive');
+
+        eventsTab.classList.add('inactive');
+        eventsTab.classList.remove('active');
+    } else if (tab === 'events') {
+        clubsContent.style.display = 'none';
+        eventsContent.style.display = 'block';
+
+        clubsTab.classList.add('inactive');
+        clubsTab.classList.remove('active');
+
+        eventsTab.classList.add('active');
+        eventsTab.classList.remove('inactive');
+    }
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}SunDevil Connect{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="header">
+            <h1>SunDevil Connect</h1>
+
+            {% if username %}
+            <div class="user-section">
+                <span>Hey, {{request.session.first_name}} {{request.session.last_name}}!</span>
+
+                <form method="post" action="{% url 'logout' %}">
+                    {%csrf_token%}
+                    <button type="submit" class="button button-secondary">Logout</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
