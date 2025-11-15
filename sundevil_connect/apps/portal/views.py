@@ -60,9 +60,12 @@ class StudentPortalView(View):
 
         if club_id:
             club = self.facade.view_club_details(club_id)
+            student_id = request.session.get('user_id')
+            membership_status = self.facade.get_membership_status(student_id, club_id)
             return render(request, 'portal/club_detail.html', {
                 'club': club,
-                'username': request.session.get('username')
+                'username': request.session.get('username'),
+                'membership_status': membership_status
             })
 
         action = request.GET.get('action')
@@ -88,7 +91,34 @@ class StudentPortalView(View):
             return redirect('login')
 
         student_id = request.session.get('user_id')
-
+        action = request.POST.get('action')
+        
+        if action == 'join_club':
+            club_id = int(request.POST.get('club_id'))
+            try:
+                self.facade.join_club(student_id, int(club_id))
+                club = self.facade.view_club_details(int(club_id))
+                
+                membership_status = self.facade.get_membership_status(student_id, int(club_id))
+                
+                return render(request, 'portal/club_detail.html', {
+                    'club': club,
+                    'username': request.session.get('username'),
+                    'membership_status': membership_status,
+                    'success': 'Club join request submitted successfully!'
+                })
+                
+            except ValueError as e:
+                club = self.facade.view_club_details(int(club_id))
+                membership_status = self.facade.get_membership_status(student_id, int(club_id))
+                return render(request, 'portal/club_detail.html', {
+                    'club': club,
+                    'username': request.session.get('username'),
+                    'membership_status': membership_status,
+                    'error': str(e)
+                })
+                
+        
         club_data = {
             'name': request.POST.get('club_name'),
             'description': request.POST.get('description'),
