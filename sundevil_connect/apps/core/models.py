@@ -151,3 +151,35 @@ class ClubApplication(models.Model):
     def mark_under_review(self):
         self.status = 'UNDER_REVIEW'
         self.save()
+
+
+
+class Membership(models.Model):
+    ALL_MEMBERSHIP_STATUSES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+    ]
+
+    membership_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='memberships')
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='memberships')
+    status = models.CharField(max_length=20, choices=ALL_MEMBERSHIP_STATUSES, default='PENDING')
+    joined_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'memberships'
+        unique_together = ('student', 'club')
+
+    def approve(self):
+        from django.utils import timezone
+        self.status = 'APPROVED'
+        self.approved_at = timezone.now()
+        self.save()
+        self.club.members_count += 1
+        self.club.save()
+
+    def reject(self):
+        self.status = 'REJECTED'
+        self.save()
