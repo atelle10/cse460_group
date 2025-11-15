@@ -3,6 +3,7 @@ from django.views import View
 from apps.core.models import Student, Admin, ClubLeader, Club
 from apps.facades.student_portal_facade import StudentPortalFacade
 from apps.facades.admin_facade import AdminFacade
+from apps.facades.club_mgmt_facade import ClubMgmtFacade
 
 """This file defines the views """
 
@@ -53,6 +54,7 @@ class AuthView(View):
 class StudentPortalView(View):
 
     facade = StudentPortalFacade()
+    club_mgmt_facade = ClubMgmtFacade()
 
     def get(self, request, club_id=None):
         if request.session.get('user_type') != 'student':
@@ -127,7 +129,7 @@ class StudentPortalView(View):
         }
 
         try:
-            self.facade.create_club_application(student_id, club_data)
+            self.club_mgmt_facade.create_new_club(student_id, club_data)
 
             user_id = request.session.get('user_id')
             student = Student.objects.get(user_id=user_id)
@@ -148,7 +150,9 @@ class StudentPortalView(View):
 
 
 class ClubLeaderView(View):
-
+    
+    club_mgmt_facade = ClubMgmtFacade()
+    
     def get(self, request):
         if request.session.get('user_type') != 'student':
             return redirect('login')
@@ -162,14 +166,69 @@ class ClubLeaderView(View):
 
         try:
             club = Club.objects.get(club_leader=club_leader)
+            pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
+            
         except Club.DoesNotExist:
             club = None
+            pending_requests = []
 
         return render(request, 'club_leader/dashboard.html', {
             'club': club,
             'username': request.session.get('username'),
-            'club_leader': club_leader
+            'club_leader': club_leader,
+            'pending_requests': pending_requests
         })
+
+    def post(self, request):
+        if request.session.get('user_type') != 'student':
+            return redirect('login')
+
+        username = request.session.get('username')
+        
+        try:
+            club_leader = ClubLeader.objects.get(username=username + "_leader")
+        except ClubLeader.DoesNotExist:
+            return redirect('student_home')
+
+        try:
+            club = Club.objects.get(club_leader=club_leader)
+        except Club.DoesNotExist:
+            return redirect('club_leader_dashboard')
+
+        action = request.POST.get('action')
+        membership_id = request.POST.get('membership_id')
+        
+
+        try:
+            if action == 'approve':
+                self.club_mgmt_facade.approve_member(int(membership_id))
+                message = 'Member approved successfully!'
+                
+            elif action == 'reject':
+                self.club_mgmt_facade.deny_member(int(membership_id))
+                message = 'Member request rejected'
+            else:
+                message = 'Invalid action'
+
+            pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
+
+            return render(request, 'club_leader/dashboard.html', {
+                'club': club,
+                'username': request.session.get('username'),
+                'club_leader': club_leader,
+                'pending_requests': pending_requests,
+                'success': message
+            })
+
+        except ValueError as e:
+            pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
+            return render(request, 'club_leader/dashboard.html', {
+                'club': club,
+                'username': request.session.get('username'),
+                'club_leader': club_leader,
+                'pending_requests': pending_requests,
+                'error': str(e)
+            })
 
 
 
