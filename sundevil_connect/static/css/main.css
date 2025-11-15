@@ -558,3 +558,22 @@ table tbody tr {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+.announcement-item {
+    padding: 17px;
+    border-left: 3px solid #8C1D40;
+    background: #f9f9f9;
+    margin-bottom: 13px;
+}
+
+.announcement-message {
+    margin-bottom: 9px;
+    color: #333;
+    line-height: 1.6;
+}
+
+.announcement-meta {
+    font-size: 13px;
+    color: #666;
+    margin: 0;
+}

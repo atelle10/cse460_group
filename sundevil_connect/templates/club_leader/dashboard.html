@@ -47,9 +47,33 @@
     {% endif %}
 
     <div class="actions-section">
-        <button class="btn">Edit Club Details</button>
-        <button class="btn btn-secondary">Manage Members</button>
+        <button class="btn" onclick="showEditForm()">Edit Club Details</button>
     </div>
+</div>
+
+<div id="edit-form" class="leader-dashboard-box" style="display: none;">
+    <h3>Edit Club Details</h3>
+    <form method="POST" action="{% url 'club_leader_dashboard' %}" class="form-container">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit_club">
+
+        <label for="club_name">Club Name</label>
+        <input type="text" name="club_name" id="club_name" value="{{ club.name }}" required>
+
+        <label for="description">Description</label>
+        <textarea name="description" id="description" rows="4" required>{{ club.description }}</textarea>
+
+        <label for="location">Location</label>
+        <input type="text" name="location" id="location" value="{{ club.location }}" required>
+
+        <label for="categories">Categories (comma-separated)</label>
+        <input type="text" name="categories" id="categories" value="{{ club.categories|join:', ' }}" required>
+
+        <div>
+            <button type="submit" class="btn">Save Changes</button>
+            <button type="button" class="btn btn-secondary" onclick="hideEditForm()">Cancel</button>
+        </div>
+    </form>
 </div>
 
 
@@ -120,20 +144,29 @@
 
 <div class="leader-dashboard-box">
     <h3>Post Announcement</h3>
-    <form class="form-container">
-        <textarea placeholder="Write a new announcement here..." rows="4"></textarea>
-
+    <form method="POST" action="{% url 'club_leader_dashboard' %}" class="form-container">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="post_announcement">
+        <textarea name="message" placeholder="Write a new announcement here..." rows="4" required></textarea>
         <div>
             <button type="submit" class="btn">Post</button>
         </div>
-
     </form>
 </div>
 
 
 <div class="leader-dashboard-box">
     <h3>Recent Announcements</h3>
-    <p class="text-muted">No announcements yet.</p>
+    {% if announcements %}
+        {% for announcement in announcements %}
+        <div class="announcement-item">
+            <p class="announcement-message">{{ announcement.message }}</p>
+            <p class="announcement-meta">Posted {{ announcement.created_at|date:"M d, Y" }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No announcements yet.</p>
+    {% endif %}
 </div>
 
 {% else %}
@@ -141,5 +174,16 @@
     <p>You are not currently leading any clubs.</p>
 </div>
 {% endif %}
+
+<script>
+function showEditForm() {
+    document.getElementById('edit-form').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hideEditForm() {
+    document.getElementById('edit-form').style.display = 'none';
+}
+</script>
 
 {% endblock %}
