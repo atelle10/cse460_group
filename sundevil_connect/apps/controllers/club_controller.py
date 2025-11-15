@@ -39,35 +39,6 @@ class ClubController:
 
     def view_clubs(self) -> QuerySet[Club]:
         return Club.objects.filter(is_active=True).order_by('name')
-    
-    def request_to_join_club(self, student_id: int, club_id: int) -> Membership:
-        try:
-            student = Student.objects.get(user_id=student_id)
-            club = Club.objects.get(club_id=club_id)
-            
-            existing_membership = Membership.objects.filter(
-                student=student,
-                club=club
-            ).first()
-            
-            if existing_membership:
-                if existing_membership.status == 'APPROVED':
-                    raise ValueError("Student is already a member of the club")
-                elif existing_membership.status == 'PENDING':
-                    raise ValueError("Membership request is already pending")
-                elif existing_membership.status == 'REJECTED':
-                    raise ValueError("Membership request was rejected previously")
-            
-            membership = Membership.objects.create(
-                student=student,
-                club=club,
-                status='PENDING'
-            )
-            return membership
-        except Student.DoesNotExist:
-            raise ValueError("Student does not exist")
-        except Club.DoesNotExist:
-            raise ValueError("Club does not exist")
-    
+ 
     
     
