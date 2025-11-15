@@ -1,6 +1,6 @@
 import os
 import django
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
@@ -16,7 +16,8 @@ club_leader, created = ClubLeader.objects.get_or_create(
         'last_name': student.last_name,
         'email': student.email,
         'password': student.password,
-        'title': 'President'
+        'title': 'President',
+        'leader_start_date': date.today()
     }
 )
 
@@ -49,7 +50,7 @@ event1 = Event.objects.create(
     cost=0.00,
     start_time=datetime.now() + timedelta(days=7),
     end_time=datetime.now() + timedelta(days=7, hours=2),
-    location='Memorial Union',
+    location='Tempe Campus',
     status='UPCOMING',
     capacity=50,
     registered_count=12,
@@ -64,7 +65,7 @@ event2 = Event.objects.create(
     cost=0.00,
     start_time=datetime.now() + timedelta(days=14),
     end_time=datetime.now() + timedelta(days=14, hours=3),
-    location='Brickyard',
+    location='Tempe Campus',
     status='UPCOMING',
     capacity=30,
     registered_count=8,
