@@ -4,15 +4,42 @@ from datetime import datetime, timedelta
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 django.setup()
-from apps.core.models import Club, Event
+from apps.core.models import Club, Event, Student, ClubLeader
 
-clubs = Club.objects.all()
+student = Student.objects.get(username='mkrasnik')
 
-if not clubs.exists():
-    print("No clubs found. Create clubs first.")
-    exit()
+leader_username = student.username + "_leader"
+club_leader, created = ClubLeader.objects.get_or_create(
+    username=leader_username,
+    defaults={
+        'first_name': student.first_name,
+        'last_name': student.last_name,
+        'email': student.email,
+        'password': student.password,
+        'title': 'President'
+    }
+)
 
-club1 = clubs.first()
+if created:
+    print(f"Created club leader: {club_leader.username}")
+
+club1, club_created = Club.objects.get_or_create(
+    club_leader=club_leader,
+    defaults={
+        'name': 'Coding Hackathon Club',
+        'description': 'A club to practice for hackathons.',
+        'location': 'Tempe Campus',
+        'categories': ['Technology', 'Software'],
+        'is_active': True,
+        'members_count': 15,
+        'leaders_count': 1
+    }
+)
+
+if club_created:
+    print(f"Created club: {club1.name}")
+else:
+    print(f"Using existing club: {club1.name}")
 
 event1 = Event.objects.create(
     club=club1,
