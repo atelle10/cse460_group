@@ -58,7 +58,26 @@
 
 <div id="events-content" class="events-hidden">
     <h3>Upcoming Events</h3>
-    <p class="text-muted">No events scheduled at this time.</p>
+
+    {% if events %}
+        {% for event in events %}
+        <div class="club-card">
+            <h4>
+                <a href="{% url 'event_detail' event.event_id %}">{{ event.title }}</a>
+            </h4>
+            <p>{{ event.description }}</p>
+
+            <div class="club-info">
+                <p><strong>Club:</strong> <a href="{% url 'club_detail' event.club.club_id %}">{{ event.club.name }}</a></p>
+                <p><strong>Date:</strong> {{ event.start_time|date:"M d, Y" }}</p>
+                <p><strong>Time:</strong> {{ event.start_time|date:"g:i A" }} - {{ event.end_time|date:"g:i A" }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No events scheduled at this time.</p>
+    {% endif %}
 </div>
 
 

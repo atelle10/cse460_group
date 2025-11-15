@@ -151,3 +151,93 @@ class ClubApplication(models.Model):
     def mark_under_review(self):
         self.status = 'UNDER_REVIEW'
         self.save()
+
+
+
+class Membership(models.Model):
+    ALL_MEMBERSHIP_STATUSES = [
+        ('PENDING', 'Pending'),
+        ('APPROVED', 'Approved'),
+        ('REJECTED', 'Rejected'),
+    ]
+
+    membership_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='memberships')
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='memberships')
+    status = models.CharField(max_length=20, choices=ALL_MEMBERSHIP_STATUSES, default='PENDING')
+    joined_at = models.DateTimeField(auto_now_add=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'memberships'
+        unique_together = ('student', 'club')
+
+    def approve(self):
+        from django.utils import timezone
+        self.status = 'APPROVED'
+        self.approved_at = timezone.now()
+        self.save()
+        self.club.members_count += 1
+        self.club.save()
+
+    def reject(self):
+        self.status = 'REJECTED'
+        self.save()
+
+
+
+class Announcement(models.Model):
+    announcement_id = models.AutoField(primary_key=True)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='announcements')
+    creator = models.ForeignKey(ClubLeader, on_delete=models.SET_NULL, null=True, related_name='announcements')
+    message = models.TextField()
+    is_pinned = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'announcements'
+        ordering = ['-is_pinned', '-created_at']
+    
+    def edit_announcement(self, message: str):
+        self.message = message
+        self.save()
+
+
+
+class Event(models.Model):
+    EVENT_STATUS_CHOICES = [
+        ('UPCOMING', 'Upcoming'),
+        ('ONGOING', 'Ongoing'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+    
+    event_id = models.AutoField(primary_key=True)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='events')
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    is_free = models.BooleanField(default=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    location = models.CharField(max_length=200)
+    status = models.CharField(max_length=20, choices=EVENT_STATUS_CHOICES, default='UPCOMING')
+    capacity = models.IntegerField(null=True, blank=True)
+    registered_count = models.IntegerField(default=0)
+    event_type = models.CharField(max_length=50, default='IN_PERSON')
+    
+    class Meta:
+        db_table = 'events'
+        ordering = ['start_time']
+    
+    def is_paid(self) -> bool:
+        return not self.is_free
+    
+    def at_capacity(self) -> bool:
+        if self.capacity is None:
+            return False
+        return self.registered_count >= self.capacity
+    
+    def cancel(self):
+        self.status = 'CANCELLED'
+        self.save()

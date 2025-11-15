@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} - SunDevil Connect{% endblock %}
+
+{% block content %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'student_home' %}" class="btn btn-secondary">Back to Home</a>
+</div>
+
+<div class="club-detail-box">
+    <div class="club-header">
+        <h2>{{ event.title }}</h2>
+    </div>
+
+    <div class="club-description">
+        <h3>About</h3>
+        <p>{{ event.description }}</p>
+    </div>
+
+    <div class="club-details-grid">
+        <div class="detail-item">
+            <h3>Details</h3>
+            <p><strong>Date:</strong> {{ event.start_time|date:"M d, Y" }}</p>
+            <p><strong>Time:</strong> {{ event.start_time|date:"g:i A" }} - {{ event.end_time|date:"g:i A" }}</p>
+            <p><strong>Location:</strong> {{ event.location }}</p>
+            <p><strong>Type:</strong> {{ event.event_type }}</p>
+        </div>
+
+        <div class="detail-item">
+            <h3>Registration</h3>
+            <p><strong>Capacity:</strong> {% if event.capacity %}{{ event.registered_count }}/{{ event.capacity }}{% else %}Unlimited{% endif %}</p>
+        </div>
+    </div>
+
+    <div class="detail-item">
+        <h3>Club</h3>
+        <p><a href="{% url 'club_detail' event.club.club_id %}">{{ event.club.name }}</a></p>
+    </div>
+
+    <div class="join-section">
+        <button class="btn">Register for Event</button>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+import os
+import django
+from datetime import datetime, timedelta
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+django.setup()
+from apps.core.models import Club, Event
+
+clubs = Club.objects.all()
+
+if not clubs.exists():
+    print("No clubs found. Create clubs first.")
+    exit()
+
+club1 = clubs.first()
+
+event1 = Event.objects.create(
+    club=club1,
+    title='Coding Event 1',
+    description='First coding event.',
+    is_free=True,
+    cost=0.00,
+    start_time=datetime.now() + timedelta(days=7),
+    end_time=datetime.now() + timedelta(days=7, hours=2),
+    location='Memorial Union',
+    status='UPCOMING',
+    capacity=50,
+    registered_count=12,
+    event_type='IN_PERSON'
+)
+
+event2 = Event.objects.create(
+    club=club1,
+    title='Coding Event 2',
+    description='Second coding event.',
+    is_free=True,
+    cost=0.00,
+    start_time=datetime.now() + timedelta(days=14),
+    end_time=datetime.now() + timedelta(days=14, hours=3),
+    location='Brickyard',
+    status='UPCOMING',
+    capacity=30,
+    registered_count=8,
+    event_type='IN_PERSON'
+)
+
+event3 = Event.objects.create(
+    club=club1,
+    title='Coding Event 3',
+    description='Third coding event.',
+    is_free=True,
+    cost=0.00,
+    start_time=datetime.now() + timedelta(days=30),
+    end_time=datetime.now() + timedelta(days=31),
+    location='Online',
+    status='UPCOMING',
+    capacity=100,
+    registered_count=45,
+    event_type='VIRTUAL'
+)
+
+print(f"Created {Event.objects.count()} test events")
