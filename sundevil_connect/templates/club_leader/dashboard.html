@@ -7,6 +7,10 @@
 <h2>Club Leader Dashboard</h2>
 
 {% if club %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'student_home' %}" class="btn btn-secondary">Back to Clubs</a>
+</div>
 <div class="leader-dashboard-box">
     <h3>{{ club.name }}</h3>
 
