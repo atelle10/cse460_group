@@ -39,10 +39,13 @@ class ClubMgmtFacade:
         return self.club_ctrl.view_announcements(club_id)
     
     def delete_event(self, event_id: int) -> bool:
-        return self.event_ctrl.delete_event(event_id)
+        raise ValueError("Leader id required for deletion")
     
     def create_event(self, club_id: int, leader_id: int, event_data: dict):
         return self.event_ctrl.create_event(club_id, leader_id, event_data)
     
     def edit_event(self, event_id: int, event_data: dict):
         return self.event_ctrl.update_event(event_id, event_data)
+
+    def delete_event_for_leader(self, event_id: int, leader_id: int) -> bool:
+        return self.event_ctrl.delete_event(event_id, leader_id)

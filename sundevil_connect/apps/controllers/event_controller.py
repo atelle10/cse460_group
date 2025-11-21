@@ -81,8 +81,18 @@ class EventController:
     def update_event(self, event_id: int, payload: dict):
         pass
     
-    def delete_event(self, event_id: int) -> bool:
-        pass
+    def delete_event(self, event_id: int, leader_id: int) -> bool:
+        try:
+            event = Event.objects.select_related('club__club_leader').get(event_id=event_id)
+        except Event.DoesNotExist:
+            raise ValueError("Event does not exist")
+
+        club = event.club
+        if not club.club_leader or club.club_leader.user_id != leader_id:
+            raise ValueError("Only the club leader can delete events")
+
+        event.delete()
+        return True
     
     def register_for_event(self, student_id: int, event_id: int):
         pass

@@ -359,8 +359,6 @@ class ClubLeaderView(View):
                     'error': str(e)
                 })
 
-        membership_id = request.POST.get('membership_id')
-
         if action == 'create_event':
             event_data = {
                 'title': request.POST.get('title'),
@@ -394,6 +392,31 @@ class ClubLeaderView(View):
                     'error': str(e),
                     'form_data': event_data
                 })
+
+        if action == 'delete_event':
+            event_id = request.POST.get('event_id')
+            try:
+                self.club_mgmt_facade.delete_event_for_leader(int(event_id), club_leader.user_id)
+                message = 'Event deleted successfully!'
+            except ValueError as e:
+                message = str(e)
+
+            pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
+            announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+            club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
+
+            return render(request, 'club_leader/dashboard.html', {
+                'club': club,
+                'username': request.session.get('username'),
+                'club_leader': club_leader,
+                'pending_requests': pending_requests,
+                'announcements': announcements,
+                'club_events': club_events,
+                'success': message if 'successfully' in message else None,
+                'error': None if 'successfully' in message else message
+            })
+
+        membership_id = request.POST.get('membership_id')
 
         try:
             if action == 'approve':
