@@ -190,6 +190,7 @@ h4 {
     padding: 11px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .form-actions {
@@ -512,11 +513,25 @@ table tbody tr {
     gap: 11px;
 }
 
+.checkbox-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.checkbox-field label {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: bold;
+}
+
 .leader-dashboard-box textarea {
     width: 100%;
     padding: 11px;
     border: 1px solid #ddd;
     border-radius: 4px;
+    box-sizing: border-box;
 }
 
 .no-club-warning {

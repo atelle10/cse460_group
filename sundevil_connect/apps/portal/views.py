@@ -225,6 +225,7 @@ class ClubLeaderView(View):
             return redirect('login')
 
         username = request.session.get('username')
+        action = request.GET.get('action')
 
         try:
             club_leader = ClubLeader.objects.get(username=username + "_leader")
@@ -236,7 +237,14 @@ class ClubLeaderView(View):
             pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
             announcements = self.club_mgmt_facade.view_announcements(club.club_id)
             club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
-            
+
+            if action == 'create_event':
+                return render(request, 'club_leader/event_creation_form.html', {
+                    'club': club,
+                    'username': request.session.get('username'),
+                    'club_leader': club_leader
+                })
+
         except Club.DoesNotExist:
             club = None
             pending_requests = []
@@ -350,9 +358,43 @@ class ClubLeaderView(View):
                     'club_events': club_events,
                     'error': str(e)
                 })
-        
+
         membership_id = request.POST.get('membership_id')
-        
+
+        if action == 'create_event':
+            event_data = {
+                'title': request.POST.get('title'),
+                'description': request.POST.get('description'),
+                'location': request.POST.get('location'),
+                'start_time': request.POST.get('start_time'),
+                'end_time': request.POST.get('end_time'),
+                'is_free': request.POST.get('is_free'),
+                'cost': request.POST.get('cost'),
+                'capacity': request.POST.get('capacity'),
+            }
+            try:
+                self.club_mgmt_facade.create_event(club.club_id, club_leader.user_id, event_data)
+                pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
+                announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
+                return render(request, 'club_leader/dashboard.html', {
+                    'club': club,
+                    'username': request.session.get('username'),
+                    'club_leader': club_leader,
+                    'pending_requests': pending_requests,
+                    'announcements': announcements,
+                    'club_events': club_events,
+                    'success': 'Event created successfully!'
+                })
+            except ValueError as e:
+                return render(request, 'club_leader/event_creation_form.html', {
+                    'club': club,
+                    'username': request.session.get('username'),
+                    'club_leader': club_leader,
+                    'error': str(e),
+                    'form_data': event_data
+                })
+
         try:
             if action == 'approve':
                 self.club_mgmt_facade.approve_member(int(membership_id))

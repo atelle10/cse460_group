@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Event{% endblock %}
+
+{% block content %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'club_leader_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="leader-dashboard-box">
+    <h3>Create Event for {{ club.name }}</h3>
+
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'club_leader_dashboard' %}" class="form-container">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_event">
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="{{ form_data.title|default_if_none:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required>{{ form_data.description|default_if_none:'' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="{{ form_data.location|default_if_none:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">Start Time</label>
+            <input type="datetime-local" id="start_time" name="start_time" value="{{ form_data.start_time|default_if_none:'' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_time">End Time</label>
+            <input type="datetime-local" id="end_time" name="end_time" value="{{ form_data.end_time|default_if_none:'' }}" required>
+        </div>
+
+        <div class="form-group checkbox-field">
+            <label for="is_free">
+                <input type="checkbox"
+                       id="is_free"
+                       name="is_free"
+                       {% if form_data.is_free != False %}checked{% endif %}
+                       onchange="toggleCostField()">
+                <span>Free event</span>
+            </label>
+            <small class="text-muted">Uncheck to charge a price</small>
+        </div>
+
+        <div class="form-group">
+            <label for="cost">Cost (if not free)</label>
+            <input type="number"
+                   step="0.01"
+                   min="0"
+                   id="cost"
+                   name="cost"
+                   value="{{ form_data.cost|default_if_none:'' }}"
+                   {% if form_data.is_free != False %}disabled{% endif %}>
+        </div>
+
+        <div class="form-group">
+            <label for="capacity">Capacity (optional)</label>
+            <input type="number" min="1" id="capacity" name="capacity" value="{{ form_data.capacity|default_if_none:'' }}">
+        </div>
+
+        <button type="submit" class="btn">Create Event</button>
+    </form>
+</div>
+
+<script>
+function toggleCostField() {
+    const freeCheckbox = document.getElementById('is_free');
+    const costField = document.getElementById('cost');
+    if (freeCheckbox.checked) {
+        costField.value = '';
+        costField.setAttribute('disabled', 'disabled');
+    } else {
+        costField.removeAttribute('disabled');
+    }
+}
+
+// ensure initial state matches checkbox on load
+document.addEventListener('DOMContentLoaded', toggleCostField);
+</script>
+
+{% endblock %}

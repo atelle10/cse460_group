@@ -1,5 +1,6 @@
 from apps.controllers.membership_controller import MembershipController
 from apps.controllers.club_controller import ClubController
+from apps.controllers.event_controller import EventController
 from apps.core.models import Membership, Club, ClubApplication
 
 """Club leader portal facade that uses the club controller and membership controller"""
@@ -8,6 +9,7 @@ class ClubMgmtFacade:
     def __init__(self):
         self.membership_ctrl = MembershipController()
         self.club_ctrl = ClubController()
+        self.event_ctrl = EventController()
     
     def review_memberships(self, club_id: int) -> list[Membership]:
         return self.membership_ctrl.review_memberships(club_id)
@@ -37,10 +39,10 @@ class ClubMgmtFacade:
         return self.club_ctrl.view_announcements(club_id)
     
     def delete_event(self, event_id: int) -> bool:
-        pass
+        return self.event_ctrl.delete_event(event_id)
     
-    def create_event(self, club_id: int, event_data: dict):
-        pass
+    def create_event(self, club_id: int, leader_id: int, event_data: dict):
+        return self.event_ctrl.create_event(club_id, leader_id, event_data)
     
     def edit_event(self, event_id: int, event_data: dict):
-        pass
+        return self.event_ctrl.update_event(event_id, event_data)
