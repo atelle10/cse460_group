@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from apps.core.models import Student, Admin, ClubLeader, Club
+from apps.core.models import Student, Admin, ClubLeader, Club, Membership
 from apps.facades.student_portal_facade import StudentPortalFacade
 from apps.facades.admin_facade import AdminFacade
 from apps.facades.club_mgmt_facade import ClubMgmtFacade
@@ -140,12 +140,19 @@ class StudentPortalView(View):
         user_id = request.session.get('user_id')
         student = Student.objects.get(user_id=user_id)
         is_club_leader = ClubLeader.objects.filter(username=student.username + "_leader").exists()
+        my_clubs = [
+            membership.club for membership in
+            Membership.objects.filter(student_id=user_id, status='APPROVED').select_related('club')
+        ]
+        my_club_ids = {club.club_id for club in my_clubs}
+        available_clubs = [club for club in clubs if club.club_id not in my_club_ids]
 
         return render(request, 'portal/student_home.html', {
-            'clubs': clubs,
+            'clubs': available_clubs,
             'events': events,
             'username': request.session.get('username'),
-            'is_club_leader': is_club_leader
+            'is_club_leader': is_club_leader,
+            'my_clubs': my_clubs
         })
 
     def post(self, request):

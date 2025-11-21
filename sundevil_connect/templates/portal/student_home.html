@@ -16,7 +16,7 @@
     {% if not is_club_leader %}
         <a href="{% url 'student_home' %}?action=apply" class="button">Create New Club</a>
     {% else %}
-        <a href="{% url 'club_leader_dashboard' %}" class="button">My Club</a>
+        <a href="{% url 'club_leader_dashboard' %}" class="button">Manage My Club</a>
     {% endif %}
 </div>
 
@@ -31,6 +31,27 @@
 
 
 <div id="clubs-content">
+    <h3>My Clubs</h3>
+
+    {% if my_clubs %}
+        {% for club in my_clubs %}
+        <div class="club-card">
+            <h4>
+                <a href="{% url 'club_detail' club.club_id %}">{{club.name}}</a>
+            </h4>
+            <p>{{club.description}}</p>
+
+            <div class="club-info">
+                <p><strong>Location:</strong> {{club.location}}</p>
+                <p><strong>Categories:</strong> {{club.categories|join:", "}}</p>
+                <p><strong>Members:</strong> {{club.members_count}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">You haven't joined any clubs yet.</p>
+    {% endif %}
+
     <h3>Available Clubs</h3>
 
     {% if clubs %}
