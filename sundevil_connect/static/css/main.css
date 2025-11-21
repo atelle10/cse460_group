@@ -524,6 +524,7 @@ table tbody tr {
     align-items: center;
     gap: 9px;
     font-weight: bold;
+    justify-content: flex-start;
 }
 
 .leader-dashboard-box textarea {

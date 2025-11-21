@@ -46,12 +46,12 @@
 
         <div class="form-group checkbox-field">
             <label for="is_free">
+                <span>Free event</span>
                 <input type="checkbox"
                        id="is_free"
                        name="is_free"
                        {% if form_data.is_free != False %}checked{% endif %}
                        onchange="toggleCostField()">
-                <span>Free event</span>
             </label>
             <small class="text-muted">Uncheck to charge a price</small>
         </div>
