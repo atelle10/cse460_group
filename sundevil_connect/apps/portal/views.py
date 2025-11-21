@@ -235,18 +235,21 @@ class ClubLeaderView(View):
             club = Club.objects.get(club_leader=club_leader)
             pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
             announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+            club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
             
         except Club.DoesNotExist:
             club = None
             pending_requests = []
             announcements = []
+            club_events = []
 
         return render(request, 'club_leader/dashboard.html', {
             'club': club,
             'username': request.session.get('username'),
             'club_leader': club_leader,
             'pending_requests': pending_requests,
-            'announcements': announcements
+            'announcements': announcements,
+            'club_events': club_events
         })
 
     def post(self, request):
@@ -280,23 +283,27 @@ class ClubLeaderView(View):
                 pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
                 announcements = self.club_mgmt_facade.view_announcements(club.club_id)
                 club = Club.objects.get(club_id=club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
                 return render(request, 'club_leader/dashboard.html', {
                     'club': club,
                     'username': request.session.get('username'),
                     'club_leader': club_leader,
                     'pending_requests': pending_requests,
                     'announcements': announcements,
+                    'club_events': club_events,
                     'success': 'Club details updated successfully!'
                 })
             except ValueError as e:
                 pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
                 announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
                 return render(request, 'club_leader/dashboard.html', {
                     'club': club,
                     'username': request.session.get('username'),
                     'club_leader': club_leader,
                     'pending_requests': pending_requests,
                     'announcements': announcements,
+                    'club_events': club_events,
                     'error': str(e)
                 })
 
@@ -305,12 +312,14 @@ class ClubLeaderView(View):
             if not message or not message.strip():
                 pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
                 announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
                 return render(request, 'club_leader/dashboard.html', {
                     'club': club,
                     'username': request.session.get('username'),
                     'club_leader': club_leader,
                     'pending_requests': pending_requests,
                     'announcements': announcements,
+                    'club_events': club_events,
                     'error': 'Announcement message cannot be empty'
                 })
             
@@ -318,23 +327,27 @@ class ClubLeaderView(View):
                 self.club_mgmt_facade.post_announcement(club.club_id, club_leader.user_id, message)
                 pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
                 announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
                 return render(request, 'club_leader/dashboard.html', {
                     'club': club,
                     'username': request.session.get('username'),
                     'club_leader': club_leader,
                     'pending_requests': pending_requests,
                     'announcements': announcements,
+                    'club_events': club_events,
                     'success': 'Announcement posted successfully!'
                 })
             except ValueError as e:
                 pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
                 announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+                club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
                 return render(request, 'club_leader/dashboard.html', {
                     'club': club,
                     'username': request.session.get('username'),
                     'club_leader': club_leader,
                     'pending_requests': pending_requests,
                     'announcements': announcements,
+                    'club_events': club_events,
                     'error': str(e)
                 })
         
@@ -355,6 +368,7 @@ class ClubLeaderView(View):
             
             
             announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+            club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
 
             return render(request, 'club_leader/dashboard.html', {
                 'club': club,
@@ -362,12 +376,14 @@ class ClubLeaderView(View):
                 'club_leader': club_leader,
                 'pending_requests': pending_requests,
                 'announcements': announcements,
+                'club_events': club_events,
                 'success': message
             })
 
         except ValueError as e:
             pending_requests = self.club_mgmt_facade.review_memberships(club.club_id)
             announcements = self.club_mgmt_facade.view_announcements(club.club_id)
+            club_events = list(club.events.filter(status='UPCOMING').order_by('start_time'))
             
             return render(request, 'club_leader/dashboard.html', {
                 'club': club,
@@ -375,6 +391,7 @@ class ClubLeaderView(View):
                 'club_leader': club_leader,
                 'pending_requests': pending_requests,
                 'announcements': announcements,
+                'club_events': club_events,
                 'error': str(e)
             })
 
