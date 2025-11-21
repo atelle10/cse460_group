@@ -1,4 +1,4 @@
-from .views import AuthView, StudentPortalView, ClubLeaderView, AdminDashboardView
+from .views import AuthView, StudentPortalView, ClubLeaderView, AdminDashboardView, RegistrationView
 from django.contrib import admin
 from django.urls import path
 
@@ -6,6 +6,7 @@ from django.urls import path
 urlpatterns = [
     path('', AuthView.as_view(), name='login'),
     path('login/', AuthView.as_view(), name='login'),
+    path('register/', RegistrationView.as_view(), name='register'),
     path('logout/', AuthView.as_view(), {'action': 'logout'}, name='logout'),
     path('student/', StudentPortalView.as_view(), name='student_home'),
     path('student/apply/', StudentPortalView.as_view(), name='club_application'),

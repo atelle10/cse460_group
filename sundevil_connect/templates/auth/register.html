@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Create Account{% endblock %}
+{% block content %}
+
+<div class="login-container login-page-wrapper">
+    
+    <h2 class="login-title">Create Account</h2>
+    {% if error %}<div class="error-message">{{ error }}</div>{% endif %}
+
+    <form method="post" class="form-container">
+
+        {% csrf_token %}
+        <div class="form-group"><label>Username</label><input name="username" required></div>
+        <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
+        <div class="form-group"><label>First name</label><input name="first_name" required></div>
+        <div class="form-group"><label>Last name</label><input name="last_name" required></div>
+        <div class="form-group"><label>Major</label><input name="major"></div>
+        <div class="form-group"><label>College year</label><input type="number" name="college_year" min="1" max="8">
+        </div>
+
+        <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
+        <div class="form-group"><label>Confirm password</label><input type="password" name="confirm_password" required>
+        </div>
+
+        <button type="submit" class="button">Create Account</button>
+        <a class="button" href="{% url 'login' %}" style="margin-top: 10px; text-align: center;">Back to Login</a>
+        
+    </form>
+</div>
+{% endblock %}

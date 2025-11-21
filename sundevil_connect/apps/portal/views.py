@@ -49,7 +49,45 @@ class AuthView(View):
             'error': 'Invalid username or password'
         })
 
+class RegistrationView(View):
+    def get(self, request):
+        return render(request, 'auth/register.html')
 
+    def post(self, request):
+        data = {
+            'username': request.POST.get('username', '').strip(),
+            'password': request.POST.get('password', '').strip(),
+            'confirm': request.POST.get('password', '').strip(),
+            'email': request.POST.get('email', '').strip(),
+            'first_name': request.POST.get('first_name', '').strip(),
+            'last_name': request.POST.get('last_name', '').strip(),
+            'major': request.POST.get('major', '').strip(),
+            'college_year': request.POST.get('college_year') or None,
+        }
+
+        if data['password'] != data['confirm']:
+            return render(request, 'auth/register.html', {'error': 'Passwords do not match', **data})
+        
+        if Student.objects.filter(username=data['username']).exists():
+            return render(request, 'auth/register.html', {'error': 'Username already taken', **data})
+        
+        student = Student.objects.create(
+            username=data['username'],
+            password=data['password'],  # TODO: hash later
+            email=data['email'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            major=data['major'],
+            college_year=data['college_year'] or None,
+            topics_of_interest=[],
+        )
+
+        request.session['user_id'] = student.user_id
+        request.session['user_type'] = 'student'
+        request.session['username'] = student.username
+        request.session['first_name'] = student.first_name
+        request.session['last_name'] = student.last_name
+        return redirect('student_home')
 
 class StudentPortalView(View):
 
