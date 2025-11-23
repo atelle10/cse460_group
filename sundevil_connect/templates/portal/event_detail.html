@@ -25,6 +25,9 @@
             <p><strong>Time:</strong> {{ event.start_time|date:"g:i A" }} - {{ event.end_time|date:"g:i A" }}</p>
             <p><strong>Location:</strong> {{ event.location }}</p>
             <p><strong>Type:</strong> {% if event.event_type == 'IN_PERSON' %}In Person{% elif event.event_type == 'VIRTUAL' %}Virtual{% else %}{{ event.event_type }}{% endif %}</p>
+            {% if event.categories %}
+            <p><strong>Categories:</strong> {{ event.categories|join:", " }}</p>
+            {% endif %}
         </div>
 
         <div class="detail-item">

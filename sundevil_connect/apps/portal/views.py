@@ -161,6 +161,7 @@ class StudentPortalView(View):
 
         search_query = request.GET.get('search', '')
         filter_location = request.GET.get('location', '')
+        filter_category = request.GET.get('category', '')
         sort_by = request.GET.get('sort', 'date_asc')
 
         filter_payload = {}
@@ -168,6 +169,8 @@ class StudentPortalView(View):
             filter_payload['query'] = search_query
         if filter_location:
             filter_payload['location'] = filter_location
+        if filter_category:
+            filter_payload['category'] = filter_category
         filter_payload['sort'] = sort_by
 
         events = self.facade.search_events(filter_payload) if filter_payload else self.facade.view_events()
@@ -182,14 +185,21 @@ class StudentPortalView(View):
         my_club_ids = {club.club_id for club in my_clubs}
         available_clubs = [club for club in clubs if club.club_id not in my_club_ids]
 
+        all_categories = set()
+        for event in Event.objects.filter(status='UPCOMING'):
+            all_categories.update(event.categories)
+        all_categories = sorted(list(all_categories))
+
         return render(request, 'portal/student_home.html', {
             'clubs': available_clubs,
             'events': events,
+            'all_categories': all_categories,
             'username': request.session.get('username'),
             'is_club_leader': is_club_leader,
             'my_clubs': my_clubs,
             'search_query': search_query,
             'filter_location': filter_location,
+            'filter_category': filter_category,
             'sort_by': sort_by
         })
 
@@ -598,8 +608,8 @@ class ClubLeaderView(View):
                 'location': request.POST.get('location'),
                 'start_time': request.POST.get('start_time'),
                 'end_time': request.POST.get('end_time'),
-                'is_free': request.POST.get('is_free'),
-                'cost': request.POST.get('cost'),
+                'event_type': request.POST.get('event_type'),
+                'categories': request.POST.get('categories'),
                 'capacity': request.POST.get('capacity'),
             }
             try:
@@ -633,6 +643,8 @@ class ClubLeaderView(View):
                 'location': request.POST.get('location'),
                 'start_time': request.POST.get('start_time'),
                 'end_time': request.POST.get('end_time'),
+                'event_type': request.POST.get('event_type'),
+                'categories': request.POST.get('categories'),
                 'capacity': request.POST.get('capacity'),
             }
             try:

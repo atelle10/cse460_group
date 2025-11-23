@@ -84,7 +84,7 @@
         <form method="GET" action="{% url 'student_home' %}" id="event-filter-form">
             <input type="hidden" name="tab" value="events">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                 <div>
                     <label style="display: block; margin-bottom: 5px; font-weight: bold;">Search</label>
                     <input type="text" name="search" placeholder="Search events..." value="{{ search_query }}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
@@ -93,6 +93,16 @@
                 <div>
                     <label style="display: block; margin-bottom: 5px; font-weight: bold;">Location</label>
                     <input type="text" name="location" placeholder="Filter by location" value="{{ filter_location }}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+
+                <div>
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Category</label>
+                    <select name="category" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">All Categories</option>
+                        {% for cat in all_categories %}
+                        <option value="{{ cat }}" {% if filter_category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
                 <div>
@@ -126,6 +136,9 @@
                 <p><strong>Date:</strong> {{ event.start_time|date:"M d, Y" }}</p>
                 <p><strong>Time:</strong> {{ event.start_time|date:"g:i A" }} - {{ event.end_time|date:"g:i A" }}</p>
                 <p><strong>Location:</strong> {{ event.location }}</p>
+                {% if event.categories %}
+                <p><strong>Categories:</strong> {{ event.categories|join:", " }}</p>
+                {% endif %}
             </div>
         </div>
         {% endfor %}

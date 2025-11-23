@@ -2,10 +2,7 @@ from django.db import models
 from django.utils import timezone
 from typing import Dict
 from apps.controllers.notification_controller import ISubject
-from apps.controllers.admin_controller import AdminController
-from apps.controllers.club_controller import ClubController
-from apps.controllers.admin_controller import AdminController
-from apps.controllers.admin_controller import AdminController
+
 
 """This file defines the entities described in the class diagram for our system (Models for the django framework)"""
 class User(models.Model):
@@ -49,12 +46,6 @@ class Admin(User):
     class Meta:
         db_table = 'admins'
 
-    def approve_club(self, application_id: int):
-        ctrl = AdminController()
-        return ctrl.approve_club(application_id)
-
-    def resolve_flag(self, flag_id: int, decision: str):
-        pass
 
 
 class Club(models.Model):
@@ -76,13 +67,6 @@ class Club(models.Model):
 
     class Meta:
         db_table = 'club'
-
-    def __str__(self):
-        return self.name
-
-    def update_club_profile(self, info: Dict):
-        ctrl = ClubController()
-        return ctrl.edit_club_details(self.club_id, info)
 
 
 class ClubApplication(models.Model, ISubject):
@@ -107,13 +91,6 @@ class ClubApplication(models.Model, ISubject):
     class Meta:
         db_table = 'club_applications'
 
-    def approve(self):
-        ctrl = AdminController()
-        return ctrl.approve_club(self.application_id)
-
-    def reject(self, reason: str = ""):
-        ctrl = AdminController()
-        return ctrl.reject_club(self.application_id, reason)
 
     def mark_under_review(self):
         self.status = 'UNDER_REVIEW'
@@ -193,6 +170,7 @@ class Event(models.Model, ISubject):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.CharField(max_length=200)
+    categories = models.JSONField(default=list)
     status = models.CharField(max_length=20, choices=EVENT_STATUS_CHOICES, default='UPCOMING')
     capacity = models.IntegerField(null=True, blank=True)
     registered_count = models.IntegerField(default=0)
@@ -289,3 +267,4 @@ class Flag(models.Model):
         self.resolved_by = admin
         self.resolved_at = timezone.now()
         self.save()
+

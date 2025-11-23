@@ -4,14 +4,17 @@ class SearchController:
     
     def search_clubs(self, filter_payload: dict) -> list[Club]:
         clubs = Club.objects.filter(is_active=True)
-        
+
         if 'query' in filter_payload and filter_payload['query']:
             clubs = clubs.filter(name__icontains=filter_payload['query'])
-        
+
+        clubs_list = list(clubs)
+
         if 'category' in filter_payload and filter_payload['category']:
-            clubs = clubs.filter(categories__contains=filter_payload['category'])
-            
-        return list(clubs)
+            category = filter_payload['category']
+            clubs_list = [c for c in clubs_list if c.categories and category in c.categories]
+
+        return clubs_list
     
     def search_events(self, filter_payload: dict) -> list[Event]:
         events = Event.objects.select_related('club').filter(status='UPCOMING')
@@ -40,4 +43,10 @@ class SearchController:
         else:
             events = events.order_by('start_time')
 
-        return list(events)
+        events_list = list(events)
+
+        if 'category' in filter_payload and filter_payload['category']:
+            category = filter_payload['category']
+            events_list = [e for e in events_list if e.categories and category in e.categories]
+
+        return events_list

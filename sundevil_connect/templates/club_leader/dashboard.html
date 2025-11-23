@@ -228,6 +228,7 @@
             <p>{{ event.description }}</p>
             <p class="announcement-meta">
                 {{ event.start_time|date:"M d, Y" }} at {{ event.start_time|date:"g:i A" }} - {{ event.location }}
+                {% if event.categories %} | Categories: {{ event.categories|join:", " }}{% endif %}
             </p>
             <div class="admin-table-actions" style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
                 <a href="{% url 'club_leader_dashboard' %}?action=edit_event&event_id={{ event.event_id }}" class="btn btn-secondary">Edit</a>

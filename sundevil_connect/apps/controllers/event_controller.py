@@ -25,9 +25,17 @@ class EventController:
         end_time_raw = payload.get('end_time')
         event_type = payload.get('event_type', 'IN_PERSON')
         capacity_raw = payload.get('capacity')
+        categories_raw = payload.get('categories', '')
 
         if not title or not description or not location or not start_time_raw or not end_time_raw:
             raise ValueError("Title, description, location, start time, and end time are required")
+
+        # Split by comma and clean up
+        import re
+        if categories_raw:
+            categories = [cat.strip() for cat in re.split(r',\s*', categories_raw) if cat.strip()]
+        else:
+            categories = []
 
         if event_type not in ['IN_PERSON', 'VIRTUAL']:
             raise ValueError("Invalid event type")
@@ -64,6 +72,7 @@ class EventController:
             start_time=start_time,
             end_time=end_time,
             event_type=event_type,
+            categories=categories,
             is_free=True,
             cost=0,
             capacity=capacity
@@ -92,9 +101,17 @@ class EventController:
         end_time_raw = payload.get('end_time')
         event_type = payload.get('event_type', event.event_type)
         capacity_raw = payload.get('capacity')
+        categories_raw = payload.get('categories', '')
 
         if not title or not description or not location or not start_time_raw or not end_time_raw:
             raise ValueError("Title, description, location, start time, and end time are required")
+
+        # Split by comma and clean up
+        import re
+        if categories_raw:
+            categories = [cat.strip() for cat in re.split(r',\s*', categories_raw) if cat.strip()]
+        else:
+            categories = []
 
         if event_type not in ['IN_PERSON', 'VIRTUAL']:
             raise ValueError("Invalid event type")
@@ -131,6 +148,7 @@ class EventController:
         event.start_time = start_time
         event.end_time = end_time
         event.event_type = event_type
+        event.categories = categories
         event.capacity = capacity
         event.save()
 
