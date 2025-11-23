@@ -1,15 +1,16 @@
 from apps.controllers.club_controller import ClubController
 from apps.controllers.membership_controller import MembershipController
 from apps.controllers.search_controller import SearchController
-from apps.core.models import Club, Membership
-from apps.core.models import Event
+from apps.controllers.event_controller import EventController
+from apps.core.models import Club, Membership, Event, Registration, Student
 
 """Student portal facade that uses the club controller (for now)"""
 class StudentPortalFacade:
     def __init__(self, club_controller: ClubController | None = None):
         self.ctrl = club_controller or ClubController()
         self.membership_controller = MembershipController()
-        self.search_ctrl = SearchController() 
+        self.search_ctrl = SearchController()
+        self.event_ctrl = EventController() 
 
     def view_clubs(self) -> list[Club]:
         return list(self.ctrl.view_clubs())
@@ -40,8 +41,17 @@ class StudentPortalFacade:
         except Event.DoesNotExist:
             raise ValueError("Event does not exist.")
 
-    def register_for_event(self, student_id: int, event_id: int):
-        pass
-    
+    def register_for_event(self, student_id: int, event_id: int) -> Registration:
+        return self.event_ctrl.register_for_event(student_id, event_id)
 
-    
+    def cancel_registration(self, student_id: int, event_id: int) -> bool:
+        return self.event_ctrl.cancel_registration(student_id, event_id)
+
+    def get_registration_status(self, student_id: int, event_id: int) -> str:
+        try:
+            student = Student.objects.get(user_id=student_id)
+            event = Event.objects.get(event_id=event_id)
+            registration = Registration.objects.get(student=student, event=event)
+            return registration.status
+        except (Student.DoesNotExist, Event.DoesNotExist, Registration.DoesNotExist):
+            return 'NOT_REGISTERED'

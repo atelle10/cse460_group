@@ -49,3 +49,10 @@ class ClubMgmtFacade:
 
     def delete_event_for_leader(self, event_id: int, leader_id: int) -> bool:
         return self.event_ctrl.delete_event(event_id, leader_id)
+
+    def get_club_members(self, club_id: int, limit: int = 20) -> list:
+        memberships = Membership.objects.filter(
+            club_id=club_id,
+            status='APPROVED'
+        ).select_related('student')[:limit]
+        return [m.student for m in memberships]

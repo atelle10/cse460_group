@@ -1,7 +1,7 @@
 from typing import Dict
 from django.db.models import QuerySet
 from apps.core.models import ClubApplication, Student, Club, ClubLeader, Announcement
-from apps.core.models import Membership
+from apps.core.models import Membership, Admin
 
 
 """ This file defines the club controller that will handle all logic for clubs"""
@@ -22,6 +22,13 @@ class ClubController:
             status='PENDING',
             is_approved=None
         )
+
+        # Notify
+        admin_emails = [admin.email for admin in Admin.objects.all()]
+        ClubApplication.notify_observers('CLUB_APPLICATION_CREATED', {
+            'admin_emails': admin_emails,
+            'club_name': payload.get('name', 'Unknown Club')
+        })
 
         return application
 

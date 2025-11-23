@@ -15,14 +15,29 @@ class SearchController:
     
     def search_events(self, filter_payload: dict) -> list[Event]:
         events = Event.objects.select_related('club').filter(status='UPCOMING')
-        
+
         if 'query' in filter_payload and filter_payload['query']:
             events = events.filter(title__icontains=filter_payload['query'])
-        
+
         if 'is_free' in filter_payload:
             events = events.filter(is_free=filter_payload['is_free'])
-        
+
         if 'club_id' in filter_payload:
             events = events.filter(club_id=filter_payload['club_id'])
-            
+
+        if 'location' in filter_payload and filter_payload['location']:
+            events = events.filter(location__icontains=filter_payload['location'])
+
+        sort_by = filter_payload.get('sort', 'date_asc')
+        if sort_by == 'date_asc':
+            events = events.order_by('start_time')
+        elif sort_by == 'date_desc':
+            events = events.order_by('-start_time')
+        elif sort_by == 'popularity':
+            events = events.order_by('-registered_count')
+        elif sort_by == 'name':
+            events = events.order_by('title')
+        else:
+            events = events.order_by('start_time')
+
         return list(events)

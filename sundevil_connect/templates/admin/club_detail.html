@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ club.name }} - Admin View{% endblock %}
+
+{% block content %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="club-detail-box">
+    <div class="club-header">
+        <h2>{{ club.name }}</h2>
+        <p style="color: {% if club.is_active %}green{% else %}red{% endif %};">
+            {% if club.is_active %}Active{% else %}Inactive{% endif %}
+        </p>
+    </div>
+
+    <div class="club-description">
+        <h3>About</h3>
+        <p>{{ club.description }}</p>
+    </div>
+
+    <div class="club-details-grid">
+        <div class="detail-item">
+            <h3>Club Information</h3>
+            <p><strong>Location:</strong> {{club.location}}</p>
+            <p><strong>Members:</strong> {{approved_members_count}}</p>
+            <p><strong>Leaders:</strong> {{club.leaders_count}}</p>
+        </div>
+
+        <div class="detail-item">
+            <h3>Leadership</h3>
+            <p><strong>Club Leader:</strong> {{club.club_leader.first_name}} {{club.club_leader.last_name}}</p>
+            <p><strong>Title:</strong> {{club.club_leader.title}}</p>
+            <p><strong>Email:</strong> {{club.club_leader.email}}</p>
+        </div>
+    </div>
+
+    {% if club.categories %}
+    <div class="categories-section">
+        <h3>Categories</h3>
+        <div class="categories-wrapper">
+            {% for category in club.categories %}
+            <span class="category-tag">{{category}}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="detail-item">
+        <h3>Members ({{ club_members|length }})</h3>
+        {% if club_members %}
+            <div class="members-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                {% for member in club_members %}
+                    <div class="member-item" style="padding: 8px; border-bottom: 1px solid #eee;">
+                        <p style="margin: 0;"><strong>{{ member.first_name }} {{ member.last_name }}</strong></p>
+                        <p class="text-muted" style="margin: 0; font-size: 0.9em;">{{ member.email }} - {{ member.major|default:"No major listed" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No members yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="announcements-box">
+    <h3>Recent Announcements</h3>
+    {% if club.announcements.all %}
+        {% for announcement in club.announcements.all|slice:":5" %}
+        <div class="announcement-item">
+            <p class="announcement-message">{{ announcement.message }}</p>
+            <p class="announcement-meta">{{ announcement.created_at|date:"M d, Y" }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No announcements yet.</p>
+    {% endif %}
+</div>
+
+<div class="club-detail-box">
+    <h3>Upcoming Events</h3>
+    {% if club_events %}
+        {% for event in club_events %}
+        <div class="announcement-item">
+            <h4><a href="{% url 'event_detail' event.event_id %}">{{ event.title }}</a></h4>
+            <p>{{ event.description }}</p>
+            <p class="announcement-meta">
+                {{ event.start_time|date:"M d, Y" }} at {{ event.start_time|date:"g:i A" }} - {{ event.location }}
+            </p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No upcoming events.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -56,9 +56,3 @@ class AdminController:
         application.save()
 
         return True
-
-    def review_flag(self, flag_id: int):
-        pass
-
-    def resolve_flag(self, flag_id: int, decision: int) -> bool:
-        pass

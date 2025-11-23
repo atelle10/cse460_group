@@ -5,37 +5,86 @@
 {% block content %}
 
 <h2>Flagged Content</h2>
-{% if flagged_items %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if flags %}
 
 <table>
     <thead>
         <tr>
             <th>Type</th>
-
             <th>Content</th>
-
+            <th>Reason</th>
             <th>Reporter</th>
-
             <th>Date</th>
-
+            <th>Status</th>
             <th class="flagged-table-actions">Actions</th>
         </tr>
     </thead>
     <tbody>
-        {% for item in flagged_items %}
+        {% for flag in flags %}
         <tr>
-            <td>{{item.type}}</td>
-            
-            <td>{{item.content|truncatewords:15}}</td>
+            <td>{{ flag.target|capfirst }}</td>
 
-            <td>{{item.reporter}}</td>
+            <td>
+                {% if flag.event %}
+                    <a href="{% url 'event_detail' flag.event.event_id %}">{{ flag.event.title|truncatewords:10 }}</a>
+                {% elif flag.announcement %}
+                    {{ flag.announcement.message|truncatewords:10 }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
 
-            <td>{{item.date}}</td>
+            <td>{{ flag.reason|truncatewords:15 }}</td>
+
+            <td>{{ flag.creator.username }}</td>
+
+            <td>{{ flag.created_at|date:"M d, Y" }}</td>
+
+            <td>
+                {% if flag.reviewed %}
+                    <span style="color: green;">Reviewed</span>
+                {% else %}
+                    <span style="color: orange;">Pending</span>
+                {% endif %}
+                {% if flag.status == 'RESOLVED' %}
+                    <span style="color: blue;"> - Resolved</span>
+                {% elif flag.status == 'DISMISSED' %}
+                    <span style="color: gray;"> - Dismissed</span>
+                {% endif %}
+            </td>
 
             <td class="flagged-table-actions">
-                <button class="btn">Review</button>
+                <div style="display: flex; flex-direction: column; gap: 5px; align-items: flex-start;">
+                    {% if not flag.reviewed %}
+                    <form method="POST" action="{% url 'admin_dashboard' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="flag_id" value="{{ flag.flag_id }}">
+                        <button type="submit" name="action" value="mark_reviewed" class="btn" style="width: 120px;">Mark Reviewed</button>
+                    </form>
+                    {% endif %}
 
-                <button class="btn btn-secondary">Dismiss</button>
+                    {% if flag.status == 'PENDING' or flag.status == 'UNDER_REVIEW' %}
+                    <form method="POST" action="{% url 'admin_dashboard' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="flag_id" value="{{ flag.flag_id }}">
+                        <button type="submit" name="action" value="resolve_flag" class="btn" style="width: 120px;">Resolve</button>
+                    </form>
+                    <form method="POST" action="{% url 'admin_dashboard' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="flag_id" value="{{ flag.flag_id }}">
+                        <button type="submit" name="action" value="dismiss_flag" class="btn btn-secondary" style="width: 120px;">Dismiss</button>
+                    </form>
+                    {% endif %}
+                </div>
             </td>
         </tr>
         {% endfor %}

@@ -54,7 +54,7 @@ event1 = Event.objects.create(
     status='UPCOMING',
     capacity=50,
     registered_count=12,
-    event_type='IN_PERSON'
+    event_type='IN PERSON'
 )
 
 event2 = Event.objects.create(
@@ -69,7 +69,7 @@ event2 = Event.objects.create(
     status='UPCOMING',
     capacity=30,
     registered_count=8,
-    event_type='IN_PERSON'
+    event_type='IN PERSON'
 )
 
 event3 = Event.objects.create(

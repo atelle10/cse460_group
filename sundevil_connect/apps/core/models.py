@@ -1,6 +1,11 @@
 from django.db import models
+from django.utils import timezone
 from typing import Dict
-
+from apps.controllers.notification_controller import ISubject
+from apps.controllers.admin_controller import AdminController
+from apps.controllers.club_controller import ClubController
+from apps.controllers.admin_controller import AdminController
+from apps.controllers.admin_controller import AdminController
 
 """This file defines the entities described in the class diagram for our system (Models for the django framework)"""
 class User(models.Model):
@@ -18,16 +23,6 @@ class User(models.Model):
     def __str__(self) -> str:
         return self.username
 
-    def update_profile(self, new_info: Dict):
-        pass
-
-    def change_password(self, old_pass: str, new_pass: str) -> bool:
-        pass
-
-    def deactivate_account(self):
-        pass
-
-
 
 class Student(User):
     privacy_level = models.IntegerField(default=0)
@@ -38,14 +33,6 @@ class Student(User):
     class Meta:
         db_table = 'students'
 
-    def join_club(self, club_id: int):
-        pass
-
-    def register_for_event(self, event_id: int):
-        pass
-
-    def set_notification_settings(self, settings: Dict):
-        pass
 
 
 class ClubLeader(Student):
@@ -55,13 +42,6 @@ class ClubLeader(Student):
     class Meta:
         db_table = 'club_leaders'
 
-    def approve_member(self, member_id: int):
-        pass
-
-    def post_announcement(self, club_id: int, content: Dict):
-        pass
-
-
 class Admin(User):
     admin_level = models.IntegerField(default=1)
     last_login = models.DateTimeField(null=True, blank=True)
@@ -70,7 +50,6 @@ class Admin(User):
         db_table = 'admins'
 
     def approve_club(self, application_id: int):
-        from apps.controllers.admin_controller import AdminController
         ctrl = AdminController()
         return ctrl.approve_club(application_id)
 
@@ -101,19 +80,12 @@ class Club(models.Model):
     def __str__(self):
         return self.name
 
-    def add_member(self, member_id: int):
-        pass
-
-    def remove_member(self, member_id: int):
-        pass
-
     def update_club_profile(self, info: Dict):
-        from apps.controllers.club_controller import ClubController
         ctrl = ClubController()
         return ctrl.edit_club_details(self.club_id, info)
 
 
-class ClubApplication(models.Model):
+class ClubApplication(models.Model, ISubject):
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
         ('APPROVED', 'Approved'),
@@ -135,16 +107,11 @@ class ClubApplication(models.Model):
     class Meta:
         db_table = 'club_applications'
 
-    def __str__(self):
-        return f"Application by {self.student.username} - {self.status}"
-
     def approve(self):
-        from apps.controllers.admin_controller import AdminController
         ctrl = AdminController()
         return ctrl.approve_club(self.application_id)
 
     def reject(self, reason: str = ""):
-        from apps.controllers.admin_controller import AdminController
         ctrl = AdminController()
         return ctrl.reject_club(self.application_id, reason)
 
@@ -154,7 +121,7 @@ class ClubApplication(models.Model):
 
 
 
-class Membership(models.Model):
+class Membership(models.Model, ISubject):
     ALL_MEMBERSHIP_STATUSES = [
         ('PENDING', 'Pending'),
         ('APPROVED', 'Approved'),
@@ -173,7 +140,6 @@ class Membership(models.Model):
         unique_together = ('student', 'club')
 
     def approve(self):
-        from django.utils import timezone
         self.status = 'APPROVED'
         self.approved_at = timezone.now()
         self.save()
@@ -204,18 +170,24 @@ class Announcement(models.Model):
 
 
 
-class Event(models.Model):
+class Event(models.Model, ISubject):
     EVENT_STATUS_CHOICES = [
         ('UPCOMING', 'Upcoming'),
         ('ONGOING', 'Ongoing'),
         ('COMPLETED', 'Completed'),
         ('CANCELLED', 'Cancelled'),
     ]
-    
+
+    EVENT_TYPE_CHOICES = [
+        ('IN_PERSON', 'In Person'),
+        ('VIRTUAL', 'Virtual'),
+    ]
+
     event_id = models.AutoField(primary_key=True)
     club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='events')
     title = models.CharField(max_length=200)
     description = models.TextField()
+    event_type = models.CharField(max_length=20, choices=EVENT_TYPE_CHOICES, default='IN_PERSON')
     is_free = models.BooleanField(default=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     start_time = models.DateTimeField()
@@ -224,7 +196,6 @@ class Event(models.Model):
     status = models.CharField(max_length=20, choices=EVENT_STATUS_CHOICES, default='UPCOMING')
     capacity = models.IntegerField(null=True, blank=True)
     registered_count = models.IntegerField(default=0)
-    event_type = models.CharField(max_length=50, default='IN_PERSON')
     
     class Meta:
         db_table = 'events'
@@ -237,7 +208,84 @@ class Event(models.Model):
         if self.capacity is None:
             return False
         return self.registered_count >= self.capacity
-    
+
     def cancel(self):
         self.status = 'CANCELLED'
+        self.save()
+
+
+class Registration(models.Model, ISubject):
+    REGISTRATION_STATUS_CHOICES = [
+        ('REGISTERED', 'Registered'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ('NOT_REQUIRED', 'Not Required'),
+    ]
+
+    registration_id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='registrations')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='registrations')
+    status = models.CharField(max_length=20, choices=REGISTRATION_STATUS_CHOICES, default='REGISTERED')
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='NOT_REQUIRED')
+    registered_at = models.DateTimeField(auto_now_add=True)
+    cancelled_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'registrations'
+        unique_together = ('student', 'event')
+        ordering = ['-registered_at']
+
+    def confirm(self):
+        self.status = 'REGISTERED'
+        self.save()
+        self.event.registered_count += 1
+        self.event.save()
+
+    def cancel(self):
+        if self.status == 'REGISTERED':
+            self.status = 'CANCELLED'
+            self.cancelled_at = timezone.now()
+            self.save()
+            self.event.registered_count -= 1
+            self.event.save()
+
+
+class Flag(models.Model):
+    FLAG_STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('UNDER_REVIEW', 'Under Review'),
+        ('RESOLVED', 'Resolved'),
+        ('DISMISSED', 'Dismissed'),
+    ]
+
+    flag_id = models.AutoField(primary_key=True)
+    severity_rank = models.IntegerField(default=1)
+    target = models.CharField(max_length=50)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='flags_created')
+    reviewed = models.BooleanField(default=False)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True, related_name='flags')
+    announcement = models.ForeignKey(Announcement, on_delete=models.CASCADE, null=True, blank=True, related_name='flags')
+    reason = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=FLAG_STATUS_CHOICES, default='PENDING')
+    resolved_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='flags_resolved')
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'flags'
+        ordering = ['-created_at']
+
+    def mark_reviewed(self):
+        self.reviewed = True
+        self.status = 'UNDER_REVIEW'
+        self.save()
+
+    def resolve(self, admin_id: int, decision: str):
+        admin = Admin.objects.get(user_id=admin_id)
+        self.reviewed = True
+        self.status = decision
+        self.resolved_by = admin
+        self.resolved_at = timezone.now()
         self.save()

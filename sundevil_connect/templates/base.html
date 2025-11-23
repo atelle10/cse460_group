@@ -10,7 +10,13 @@
 
     <div class="main-container">
         <div class="header">
-            <h1>SunDevil Connect</h1>
+            <h1>
+                {% if request.session.user_type == 'admin' %}
+                    <a href="{% url 'admin_dashboard' %}" style="text-decoration: none; color: inherit;">SunDevil Connect</a>
+                {% else %}
+                    <a href="{% url 'student_home' %}" style="text-decoration: none; color: inherit;">SunDevil Connect</a>
+                {% endif %}
+            </h1>
 
             {% if username %}
             <div class="user-section">

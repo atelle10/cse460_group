@@ -54,8 +54,15 @@ class MembershipController:
     
     def approve_member(self, membership_id: int) -> Membership:
         try:
-            membership = Membership.objects.get(membership_id=membership_id)
+            membership = Membership.objects.select_related('student', 'club').get(membership_id=membership_id)
             membership.approve()
+
+            # Notify
+            Membership.notify_observers('MEMBERSHIP_APPROVED', {
+                'student_email': membership.student.email,
+                'club_name': membership.club.name
+            })
+
             return membership
         except Membership.DoesNotExist:
             raise ValueError("Membership request not found")

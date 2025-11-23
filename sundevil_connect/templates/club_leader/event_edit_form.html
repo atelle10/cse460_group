@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Event{% endblock %}
+
+{% block content %}
+
+<div class="club-detail-wrapper">
+    <a href="{% url 'club_leader_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="leader-dashboard-box">
+    <h3>Edit Event: {{ event.title }}</h3>
+
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'club_leader_dashboard' %}" class="form-container">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="edit_event">
+        <input type="hidden" name="event_id" value="{{ event.event_id }}">
+
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" value="{{ event.title }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" required>{{ event.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" name="location" value="{{ event.location }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="start_time">Start Time</label>
+            <input type="datetime-local" id="start_time" name="start_time" value="{{ event.start_time|date:'Y-m-d\TH:i' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="end_time">End Time</label>
+            <input type="datetime-local" id="end_time" name="end_time" value="{{ event.end_time|date:'Y-m-d\TH:i' }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="event_type">Event Type</label>
+            <select id="event_type" name="event_type" required>
+                <option value="IN_PERSON" {% if event.event_type == 'IN_PERSON' %}selected{% endif %}>In Person</option>
+                <option value="VIRTUAL" {% if event.event_type == 'VIRTUAL' %}selected{% endif %}>Virtual</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="capacity">Capacity (optional)</label>
+            <input type="number" min="1" id="capacity" name="capacity" value="{{ event.capacity|default_if_none:'' }}">
+            {% if event.registered_count > 0 %}
+                <small class="text-muted">Current registrations: {{ event.registered_count }}</small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn">Save Changes</button>
+    </form>
+</div>
+
+{% endblock %}

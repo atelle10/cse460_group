@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('status', models.CharField(choices=[('UPCOMING', 'Upcoming'), ('ONGOING', 'Ongoing'), ('COMPLETED', 'Completed'), ('CANCELLED', 'Cancelled')], default='UPCOMING', max_length=20)),
                 ('capacity', models.IntegerField(blank=True, null=True)),
                 ('registered_count', models.IntegerField(default=0)),
-                ('event_type', models.CharField(default='IN_PERSON', max_length=50)),
+                ('event_type', models.CharField(default='IN PERSON', max_length=50)),
                 ('club', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='events', to='core.club')),
             ],
             options={

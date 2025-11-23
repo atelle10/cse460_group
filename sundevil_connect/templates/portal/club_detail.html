@@ -25,7 +25,7 @@
             <h3>Club Information</h3>
             <p><strong>Location:</strong> {{club.location}}</p>
 
-            <p><strong>Members:</strong> {{club.members_count}}</p>
+            <p><strong>Members:</strong> {{approved_members_count}}</p>
 
             <p><strong>Leaders:</strong> {{club.leaders_count}}</p>
         </div>
@@ -53,6 +53,24 @@
             </span>
             {% endfor %}
         </div>
+    </div>
+    {% endif %}
+
+    {% if membership_status == 'APPROVED' %}
+    <div class="detail-item">
+        <h3>Members ({{ club_members|length }})</h3>
+        {% if club_members %}
+            <div class="members-list" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                {% for member in club_members %}
+                    <div class="member-item" style="padding: 8px; border-bottom: 1px solid #eee;">
+                        <p style="margin: 0;"><strong>{{ member.first_name }} {{ member.last_name }}</strong></p>
+                        <p class="text-muted" style="margin: 0; font-size: 0.9em;">{{ member.major|default:"No major listed" }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No members yet.</p>
+        {% endif %}
     </div>
     {% endif %}
 
@@ -87,9 +105,37 @@
     <h3>Recent Announcements</h3>
     {% if club.announcements.all %}
         {% for announcement in club.announcements.all|slice:":5" %}
-        <div class="announcement-item">
+        <div class="announcement-item" style="position: relative;">
             <p class="announcement-message">{{ announcement.message }}</p>
-            <p class="announcement-meta">{{ announcement.created_at|date:"M d, Y" }}</p>
+            <p class="announcement-meta">
+                {{ announcement.created_at|date:"M d, Y" }}
+                {% if user_type == 'admin' %}
+                <span style="margin-left: 15px;">
+                    <form method="POST" action="{% url 'club_detail' club.club_id %}" style="display: inline;" onsubmit="return confirm('Delete this announcement? This cannot be undone.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete_announcement">
+                        <input type="hidden" name="announcement_id" value="{{ announcement.announcement_id }}">
+                        <button type="submit" style="color: #d9534f; background: none; border: none; cursor: pointer; font-size: 0.85em; text-decoration: underline;">Delete</button>
+                    </form>
+                </span>
+                {% else %}
+                <span style="margin-left: 15px;">
+                    <a href="#" onclick="document.getElementById('flag-form-{{ announcement.announcement_id }}').style.display='block'; return false;" style="color: #999; font-size: 0.85em;">Report issue</a>
+                </span>
+                {% endif %}
+            </p>
+            {% if user_type != 'admin' %}
+            <div id="flag-form-{{ announcement.announcement_id }}" style="display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                <form method="POST" action="{% url 'club_detail' club.club_id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="flag_announcement">
+                    <input type="hidden" name="announcement_id" value="{{ announcement.announcement_id }}">
+                    <textarea name="reason" rows="2" placeholder="Describe the issue..." required style="width: 100%; padding: 5px; margin-bottom: 5px;"></textarea>
+                    <button type="submit" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.9em;">Submit Report</button>
+                    <button type="button" onclick="document.getElementById('flag-form-{{ announcement.announcement_id }}').style.display='none';" class="btn" style="padding: 5px 10px; font-size: 0.9em;">Cancel</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
         {% endfor %}
     {% else %}

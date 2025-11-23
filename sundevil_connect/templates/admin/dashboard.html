@@ -81,6 +81,9 @@
                 <strong>Members:</strong> {{club.members_count}}
 
             </p>
+            <div style="margin-top: 10px;">
+                <a href="{% url 'admin_dashboard' %}?view=club_detail&club_id={{ club.club_id }}" class="btn btn-secondary" style="padding: 8px 16px; text-decoration: none; display: inline-block;">View Details</a>
+            </div>
         </div>
         {% endfor %}
     </div>

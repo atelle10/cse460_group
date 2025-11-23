@@ -44,27 +44,12 @@
             <input type="datetime-local" id="end_time" name="end_time" value="{{ form_data.end_time|default_if_none:'' }}" required>
         </div>
 
-        <div class="form-group checkbox-field">
-            <label for="is_free">
-                <span>Free event</span>
-                <input type="checkbox"
-                       id="is_free"
-                       name="is_free"
-                       {% if form_data.is_free != False %}checked{% endif %}
-                       onchange="toggleCostField()">
-            </label>
-            <small class="text-muted">Uncheck to charge a price</small>
-        </div>
-
         <div class="form-group">
-            <label for="cost">Cost (if not free)</label>
-            <input type="number"
-                   step="0.01"
-                   min="0"
-                   id="cost"
-                   name="cost"
-                   value="{{ form_data.cost|default_if_none:'' }}"
-                   {% if form_data.is_free != False %}disabled{% endif %}>
+            <label for="event_type">Event Type</label>
+            <select id="event_type" name="event_type" required>
+                <option value="IN_PERSON" {% if form_data.event_type == 'IN_PERSON' or not form_data.event_type %}selected{% endif %}>In Person</option>
+                <option value="VIRTUAL" {% if form_data.event_type == 'VIRTUAL' %}selected{% endif %}>Virtual</option>
+            </select>
         </div>
 
         <div class="form-group">
@@ -75,21 +60,5 @@
         <button type="submit" class="btn">Create Event</button>
     </form>
 </div>
-
-<script>
-function toggleCostField() {
-    const freeCheckbox = document.getElementById('is_free');
-    const costField = document.getElementById('cost');
-    if (freeCheckbox.checked) {
-        costField.value = '';
-        costField.setAttribute('disabled', 'disabled');
-    } else {
-        costField.removeAttribute('disabled');
-    }
-}
-
-// ensure initial state matches checkbox on load
-document.addEventListener('DOMContentLoaded', toggleCostField);
-</script>
 
 {% endblock %}
