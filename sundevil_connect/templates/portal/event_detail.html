@@ -5,7 +5,11 @@
 {% block content %}
 
 <div class="club-detail-wrapper">
-    <a href="{% url 'student_home' %}" class="btn btn-secondary">Back to Home</a>
+    {% if user_type == 'admin' %}
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Back to Home</a>
+    {% else %}
+        <a href="{% url 'student_home' %}" class="btn btn-secondary">Back to Home</a>
+    {% endif %}
 </div>
 
 <div class="club-detail-box">
