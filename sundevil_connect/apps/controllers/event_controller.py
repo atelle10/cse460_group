@@ -191,16 +191,27 @@ class EventController:
         if event.at_capacity():
             raise ValueError("Event is at full capacity")
 
-        if Registration.objects.filter(student=student, event=event, status='REGISTERED').exists():
-            raise ValueError("Already registered for this event")
+        existing_registration = Registration.objects.filter(student=student, event=event).first()
 
-        registration = Registration.objects.create(
-            student=student,
-            event=event,
-            status='REGISTERED',
-            payment_status='NOT_REQUIRED'
-        )
-        registration.confirm()
+        if existing_registration:
+            if existing_registration.status == 'REGISTERED':
+                raise ValueError("Already registered for this event")
+            elif existing_registration.status == 'CANCELLED':
+                existing_registration.status = 'REGISTERED'
+                existing_registration.cancelled_at = None
+                existing_registration.save()
+                existing_registration.confirm()
+                registration = existing_registration
+            else:
+                registration = existing_registration
+        else:
+            registration = Registration.objects.create(
+                student=student,
+                event=event,
+                status='REGISTERED',
+                payment_status='NOT_REQUIRED'
+            )
+            registration.confirm()
 
         # Notify
         if event.club.club_leader:
